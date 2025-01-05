@@ -1,0 +1,13 @@
+
+# CLI tool, only in development environment.
+# https://goframe.org/docs/cli
+gfcli:
+  gen:
+    dao:
+      - link: "mysql:gf_user_test:Hi6ZrYHtAMYNkfrb@tcp(db.isz.lumosc.com:3306)/gf_user_test?multiStatements=true"
+        descriptionTag: true
+
+  docker:
+    build: "-a amd64 -s linux -p temp -ew"
+    tagPrefixes:
+      - my.image.pub/my-app

@@ -1,0 +1,46 @@
+server:
+  address: ":8000"
+  openapiPath: "/api.json"
+  swaggerPath: "/swagger"
+
+logger:
+  level: "all"
+  stdout: true
+
+database:
+  default:
+    link: "mysql:test:123456@tcp(127.0.0.1:3306)/gf_user?multiStatements=true&loc=Local"
+
+kvdb:
+  endpoints:
+    - 127.0.0.1:2379
+    - 127.0.0.1:2380
+    - 127.0.0.1:2381
+  username:
+  password:
+
+redis:
+  default:
+    address: "127.0.0.1:6379"
+    pass: ""
+
+storage:
+  default:
+    type: minio
+    endpoint: 127.0.0.1:9000
+    access_id:
+    secret:
+    bucket: default
+    ssl: false
+
+meta:
+  service_name: "user"
+
+registry:
+  instance:
+    meta:
+      key1: "value1"
+      key2: 2
+
+token:
+  refresh_token_limit: 5

@@ -1,0 +1,28 @@
+[
+  {
+    "name": "account_status",
+    "content": [
+      {
+        "key": 0,
+        "value": "in-use"
+      },
+      {
+        "key": 1,
+        "value": "frozen"
+      }
+    ]
+  },
+  {
+    "name": "account_type",
+    "content": [
+      {
+        "key": 0,
+        "value": "normal"
+      },
+      {
+        "key": 1,
+        "value": "manager"
+      }
+    ]
+  }
+]
