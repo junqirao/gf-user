@@ -6,6 +6,7 @@ import (
 	"github.com/junqirao/gocomponents/response"
 )
 
+// user & account
 var (
 	ErrAccountNotExist = response.NewCode(1000, "account not exist", http.StatusNotFound)
 	ErrAccountLocked   = response.NewCode(1001, "account frozen", http.StatusLocked)
@@ -15,5 +16,10 @@ var (
 
 // token
 var (
-	ErrInvalidToken = response.NewCode(2000, "invalid token", http.StatusUnauthorized)
+	ErrInvalidToken = response.NewCode(1200, "invalid token", http.StatusUnauthorized)
+)
+
+// space
+var (
+	ErrNotSpaceManager = response.NewCode(1300, "not space manager", http.StatusForbidden)
 )

@@ -8,6 +8,7 @@ type Space struct {
 	Id          int64          `json:"id"`
 	Name        string         `json:"name"`
 	Logo        string         `json:"logo"`
+	LogoKey     string         `json:"logo_key"`
 	IsOwner     bool           `json:"is_owner"`
 	Description string         `json:"description"`
 	Profile     map[string]any `json:"profile"`

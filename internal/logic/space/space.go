@@ -2,6 +2,7 @@ package space
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
@@ -39,11 +40,15 @@ func (s sSpace) GetSpaceInfo(ctx context.Context, spaceId int64) (space *model.S
 	space = &model.Space{
 		Id:          gconv.Int64(sd.Id),
 		Name:        gconv.String(sd.Name),
+		LogoKey:     gconv.String(sd.Logo),
 		IsOwner:     tokenInfo.AccountId == gconv.String(sd.Owner),
 		Description: gconv.String(sd.Description),
 		Profile:     gconv.Map(sd.Profile),
 		UpdateAt:    sd.UpdateAt,
 		CreatedAt:   sd.CreatedAt,
+	}
+	if space.LogoKey != "" {
+		space.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s", space.LogoKey)
 	}
 	return
 }

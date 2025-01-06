@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
 
 	"gf-user/internal/consts"
 	"gf-user/internal/dao"
@@ -61,5 +62,26 @@ func (u sUser) CreateSpaceUser(ctx context.Context, account *do.Account, spaceId
 		CreatedAt: gtime.Now(),
 	}
 	_, err = dao.User.Ctx(ctx).Insert(usr)
+	return
+}
+
+func (u sUser) IsSpaceManager(ctx context.Context) (ok bool, err error) {
+	tokenInfo := service.Token().GetTokenInfoFromCtx(ctx)
+	if tokenInfo.SpaceId == 0 {
+		return
+	}
+	usr, err := u.GetUserByAccountId(ctx, tokenInfo.AccountId, tokenInfo.SpaceId)
+	if err != nil {
+		return
+	}
+	if gconv.Int(usr.Type) == consts.UserTypeManager {
+		ok = true
+		return
+	}
+	space, err := service.Space().GetSpaceInfo(ctx, tokenInfo.SpaceId)
+	if err != nil {
+		return
+	}
+	ok = space.IsOwner
 	return
 }

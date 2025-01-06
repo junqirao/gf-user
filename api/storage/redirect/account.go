@@ -12,4 +12,11 @@ type (
 	}
 	AccountAvatarRes struct {
 	}
+	SpaceLogoReq struct {
+		g.Meta `path:"/v1/storage/space/logo" tags:"Storage" method:"get" summary:"redirect get space logo"`
+		// model.AuthenticationRequired
+		Key string `json:"key"`
+	}
+	SpaceLogoRes struct {
+	}
 )

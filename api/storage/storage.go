@@ -13,8 +13,10 @@ import (
 
 type IStorageRedirect interface {
 	AccountAvatar(ctx context.Context, req *redirect.AccountAvatarReq) (res *redirect.AccountAvatarRes, err error)
+	SpaceLogo(ctx context.Context, req *redirect.SpaceLogoReq) (res *redirect.SpaceLogoRes, err error)
 }
 
 type IStorageV1 interface {
 	GetAccountAvatarUploadUrl(ctx context.Context, req *v1.GetAccountAvatarUploadUrlReq) (res *v1.GetAccountAvatarUploadUrlRes, err error)
+	GetSpaceLogoUploadUrl(ctx context.Context, req *v1.GetSpaceLogoUploadUrlReq) (res *v1.GetSpaceLogoUploadUrlRes, err error)
 }

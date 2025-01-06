@@ -12,7 +12,9 @@ import (
 type (
 	IStorage interface {
 		SignAvatarImageUploadUrl(ctx context.Context, accountId string) (url string, key string, err error)
+		SignSpaceLogoImageUploadUrl(ctx context.Context, spaceId int64) (url string, key string, err error)
 		SignAvatarImageGetUrl(ctx context.Context, accountId string, key string) (url string, err error)
+		SignSpaceLogoImageGetUrl(ctx context.Context, spaceId int64, key string) (url string, err error)
 	}
 )
 

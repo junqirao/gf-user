@@ -15,4 +15,12 @@ type (
 		Url string `json:"url"`
 		Key string `json:"key"`
 	}
+	GetSpaceLogoUploadUrlReq struct {
+		g.Meta `path:"/v1/storage/space/logo/upload/url" tags:"Storage" method:"get" summary:"get space logo upload url"`
+		model.AuthorizationRequired
+	}
+	GetSpaceLogoUploadUrlRes struct {
+		Url string `json:"url"`
+		Key string `json:"key"`
+	}
 )

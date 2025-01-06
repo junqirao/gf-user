@@ -16,6 +16,7 @@ type (
 		GetUserByAccountId(ctx context.Context, accountId string, spaceId int64) (usr *do.User, err error)
 		Exist(ctx context.Context, accountId string, spaceId int64) (exist bool, err error)
 		CreateSpaceUser(ctx context.Context, account *do.Account, spaceId int64) (usr *do.User, err error)
+		IsSpaceManager(ctx context.Context) (ok bool, err error)
 	}
 )
 
