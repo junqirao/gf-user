@@ -16,7 +16,7 @@ type (
 		ValidAccessToken(ctx context.Context, accessToken string) (tokenInfo *model.TokenInfo, err error)
 		// GetTokenInfoFromCtx only work under middleware.AuthToken
 		GetTokenInfoFromCtx(ctx context.Context) (tokenInfo model.TokenInfo)
-		RefreshToken(ctx context.Context, user *model.UserAccount, claims *model.RefreshTokenClaims) (newAccessToken string, err error)
+		RefreshToken(ctx context.Context, user *model.UserAccount, claims *model.RefreshTokenClaims) (newAccessToken string, newRefreshToken string, err error)
 		ParseRefreshToken(_ context.Context, refreshToken string) (claims *model.RefreshTokenClaims, err error)
 	}
 )

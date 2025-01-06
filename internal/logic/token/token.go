@@ -12,9 +12,9 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/grand"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/junqirao/gocomponents/kvdb"
-	uuid "github.com/satori/go.uuid"
 
 	"gf-user/internal/consts"
 	"gf-user/internal/model"
@@ -64,7 +64,7 @@ func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	refreshTokenKey := uuid.NewV4().String()
+	refreshTokenKey := grand.S(8)
 	if accessToken, err = t.signAccessToken(user, refreshTokenKey); err != nil {
 		return
 	}
@@ -140,19 +140,20 @@ func (t sToken) GetTokenInfoFromCtx(ctx context.Context) (tokenInfo model.TokenI
 	return
 }
 
-func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claims *model.RefreshTokenClaims) (newAccessToken string, err error) {
+func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claims *model.RefreshTokenClaims) (newAccessToken, newRefreshToken string, err error) {
 	key := t.getUserRefreshTokenKey(user.Id)
 	rts, err := t.getUserRefreshTokens(ctx, key)
 	if err != nil {
 		return
 	}
-	if err = t.removeInvalidRefreshTokens(ctx, key, rts); err != nil {
-		return
-	}
 
 	for _, rt := range rts {
 		if rt.Key == claims.Subject {
-			return t.signAccessToken(user, rt.Key)
+			if _, err = g.Redis().ZRem(ctx, key, rt.Key); err != nil {
+				return
+			}
+			newAccessToken, newRefreshToken, err = t.GenerateAccessToken(ctx, user)
+			return
 		}
 	}
 

@@ -176,14 +176,14 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 		return
 	}
 
-	newAccessToken, err := service.Token().RefreshToken(ctx, ua, claims)
+	newAccessToken, newRefreshToken, err := service.Token().RefreshToken(ctx, ua, claims)
 	if err != nil {
 		return
 	}
 	res = &model.UserAccountLoginInfo{
 		UserAccount:  ua,
 		AccessToken:  newAccessToken,
-		RefreshToken: refreshToken,
+		RefreshToken: newRefreshToken,
 	}
 	return
 }
