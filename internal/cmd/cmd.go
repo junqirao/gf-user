@@ -39,8 +39,12 @@ var (
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.AuthToken)
 					group.Bind(
+						// storage
 						storage.NewV1(),
+						// account & user
 						account.NewUser(),
+						account.NewAccount(),
+						// space
 						space.NewV1(),
 					)
 				})

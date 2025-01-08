@@ -7,9 +7,16 @@ package account
 import (
 	"context"
 
+	"gf-user/api/account/account"
 	"gf-user/api/account/login"
 	"gf-user/api/account/user"
 )
+
+type IAccountAccount interface {
+	ModifyName(ctx context.Context, req *account.ModifyNameReq) (res *account.ModifyNameRes, err error)
+	ModifyAvatar(ctx context.Context, req *account.ModifyAvatarReq) (res *account.ModifyAvatarRes, err error)
+	ModifyPassword(ctx context.Context, req *account.ModifyPasswordReq) (res *account.ModifyPasswordRes, err error)
+}
 
 type IAccountLogin interface {
 	UserLogin(ctx context.Context, req *login.UserLoginReq) (res *login.UserLoginRes, err error)

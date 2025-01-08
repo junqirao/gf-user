@@ -19,3 +19,9 @@ type ControllerUser struct{}
 func NewUser() account.IAccountUser {
 	return &ControllerUser{}
 }
+
+type ControllerAccount struct{}
+
+func NewAccount() account.IAccountAccount {
+	return &ControllerAccount{}
+}
