@@ -11,12 +11,8 @@ import (
 	"github.com/junqirao/gocomponents/structs"
 
 	"gf-user/internal/model"
+	"gf-user/internal/packed"
 	"gf-user/internal/service"
-)
-
-const (
-	tokenConfigKey      = "token"
-	tokenConfigStoTopic = "token_config"
 )
 
 var (
@@ -38,7 +34,7 @@ type sConfig struct {
 
 func (s sConfig) GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig) {
 	res = new(model.UserTokenConfig)
-	err := s.getOne(ctx, s.getName(tokenConfigStoTopic), tokenConfigKey, res)
+	err := s.getOne(ctx, s.getName(packed.ConfigStoNameToken), packed.ConfigKeyToken, res)
 	if err != nil {
 		g.Log().Warningf(ctx, "failed to get token config: %s", err.Error())
 		return
@@ -46,8 +42,29 @@ func (s sConfig) GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig
 	return
 }
 
-func (s sConfig) SetTokenConfig(ctx context.Context, in *model.UserTokenConfig) (err error) {
-	return s.set(ctx, s.getName(tokenConfigStoTopic), tokenConfigKey, in)
+func (s sConfig) Get(ctx context.Context, sto, key string, ptr any) (err error) {
+	return s.getOne(ctx, s.getName(sto), key, ptr)
+}
+
+func (s sConfig) Set(ctx context.Context, sto, key string, val any) (err error) {
+	return s.set(ctx, s.getName(sto), key, val)
+}
+
+func (s sConfig) SetIfNotExist(ctx context.Context, name, key string, val any) (err error) {
+	var res []*kvdb.KV
+	res, err = kvdb.Storages.GetStorage(name).Get(ctx, key)
+	switch {
+	case err == nil:
+		if len(res) > 0 {
+			return
+		}
+	case errors.Is(err, kvdb.ErrStorageNotFound):
+		err = nil
+	default:
+		return
+	}
+
+	return kvdb.Storages.GetStorage(name).Set(ctx, key, val)
 }
 
 func (s sConfig) getName(topic string) string {

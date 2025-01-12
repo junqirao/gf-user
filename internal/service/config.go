@@ -13,7 +13,9 @@ import (
 type (
 	IConfig interface {
 		GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig)
-		SetTokenConfig(ctx context.Context, in *model.UserTokenConfig) (err error)
+		Get(ctx context.Context, sto string, key string, ptr any) (err error)
+		Set(ctx context.Context, sto string, key string, val any) (err error)
+		SetIfNotExist(ctx context.Context, name string, key string, val any) (err error)
 	}
 )
 

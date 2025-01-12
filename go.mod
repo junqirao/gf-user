@@ -7,7 +7,7 @@ require (
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.3
 	github.com/gogf/gf/v2 v2.8.3
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/junqirao/gocomponents v0.0.1-rc3.0.20250112015632-aebdd58053fb
+	github.com/junqirao/gocomponents v0.0.1-rc3.0.20250112070606-0e80e7142da3
 	github.com/satori/go.uuid v1.2.0
 )
 
