@@ -16,7 +16,7 @@ type (
 	}
 
 	BindMFAReq struct {
-		g.Meta `path:"/v1/account/mfa" tags:"User" method:"post" summary:"User bind mfa"`
+		g.Meta `path:"/v1/account/mfa/bind" tags:"User" method:"post" summary:"User bind mfa"`
 		model.AuthorizationRequired
 		Code string `json:"code"`
 	}

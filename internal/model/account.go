@@ -33,6 +33,7 @@ type (
 		UserInfo  *UserInfo   `json:"user_info"`
 		SpaceInfo *Space      `json:"space_info"`
 		Extra     interface{} `json:"extra"`
+		HasMFA    bool        `json:"has_mfa"`
 	}
 
 	AccountLoginInput struct {
@@ -68,6 +69,7 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 		CreatedAt: account.CreatedAt,
 		UpdateAt:  account.UpdateAt,
 		Extra:     gconv.Map(account.Extra),
+		HasMFA:    len(account.Mfa) > 0,
 	}
 	if len(sp) > 0 {
 		ua.SpaceInfo = sp[0]

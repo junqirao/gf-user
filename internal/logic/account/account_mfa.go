@@ -49,13 +49,14 @@ func (s sAccount) BindMFA(ctx context.Context, mfaCode string) (err error) {
 	}
 	cfg := service.Config().GetMFAConfig(ctx)
 	authenticator := mfa.NewGoogleAuthenticator(cfg.CodeLength, cfg.SecretLength)
-	secret, err := g.Redis().Get(ctx, fmt.Sprintf("mfa:bind:%v", account.Id))
+	cacheKey := fmt.Sprintf("mfa:bind:%v", account.Id)
+	secret, err := g.Redis().Get(ctx, cacheKey)
 	if err != nil || secret.IsNil() || secret.IsEmpty() {
 		return
 	}
 
 	sc := secret.String()
-	if !authenticator.VerifyCode(mfaCode, sc, cfg.VerifyDiscrepancy) {
+	if !authenticator.VerifyCode(sc, mfaCode, cfg.VerifyDiscrepancy) {
 		err = code.ErrAccountMfaCode
 		return
 	}
@@ -66,6 +67,9 @@ func (s sAccount) BindMFA(ctx context.Context, mfaCode string) (err error) {
 	_, err = dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, account.Id).Data(g.Map{
 		dao.Account.Columns().Mfa: encrypt,
 	}).Update()
+	if err == nil {
+		_, err = g.Redis().Unlink(ctx, cacheKey)
+	}
 	return
 }
 
