@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 
 	"gf-user/internal/dao"
+	"gf-user/internal/model"
 	"gf-user/internal/model/code"
 	"gf-user/internal/service"
 )
@@ -38,18 +39,21 @@ func (s sAccount) ModifyAvatar(ctx context.Context, avatar string) (err error) {
 	return
 }
 
-func (s sAccount) ModifyPassword(ctx context.Context, oldPwd, newPwd string, nonce string) (err error) {
+func (s sAccount) ModifyPassword(ctx context.Context, in *model.AccountModifyPasswordInput) (err error) {
 	tokenInfo := service.Token().GetTokenInfoFromCtx(ctx)
-	account, err := s.IsValid(ctx, tokenInfo.AccountId)
+	acc, err := s.IsValid(ctx, tokenInfo.AccountId)
 	if err != nil {
 		return
 	}
-	if gmd5.MustEncrypt(fmt.Sprintf("%v%s", account.Password, nonce)) != oldPwd {
+	if err = s.VerifyMFACode(ctx, acc, in.MFACode); err != nil {
+		return
+	}
+	if gmd5.MustEncrypt(fmt.Sprintf("%v%s", acc.Password, in.Nonce)) != in.Old {
 		err = code.ErrAccountPassword
 		return
 	}
-	_, err = dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, account.Id).Update(g.Map{
-		dao.Account.Columns().Password: newPwd,
+	_, err = dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, acc.Id).Update(g.Map{
+		dao.Account.Columns().Password: in.New,
 	})
 	return
 }

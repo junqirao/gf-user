@@ -47,6 +47,13 @@ type (
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
 	}
+
+	AccountModifyPasswordInput struct {
+		MFACodeRequired
+		Old   string `json:"old"`
+		New   string `json:"new"`
+		Nonce string `json:"nonce"`
+	}
 )
 
 func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccount {

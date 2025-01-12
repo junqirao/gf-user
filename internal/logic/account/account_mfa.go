@@ -10,6 +10,7 @@ import (
 
 	"gf-user/internal/dao"
 	"gf-user/internal/model/code"
+	"gf-user/internal/model/do"
 	"gf-user/internal/service"
 )
 
@@ -69,6 +70,26 @@ func (s sAccount) BindMFA(ctx context.Context, mfaCode string) (err error) {
 	}).Update()
 	if err == nil {
 		_, err = g.Redis().Unlink(ctx, cacheKey)
+	}
+	return
+}
+
+func (s sAccount) VerifyMFACode(ctx context.Context, account *do.Account, mfaCode string) (err error) {
+	cfg := service.Config().GetMFAConfig(ctx)
+	if !cfg.Enable {
+		return nil
+	}
+	if len(account.Mfa) == 0 {
+		err = code.ErrAccountMfaNotBind
+		return
+	}
+	authenticator := mfa.NewGoogleAuthenticator(cfg.CodeLength, cfg.SecretLength)
+	secret, err := gaes.Decrypt(account.Mfa, []byte(cfg.Secret))
+	if err != nil {
+		return
+	}
+	if !authenticator.VerifyCode(string(secret), mfaCode, cfg.VerifyDiscrepancy) {
+		err = code.ErrAccountMfaCode
 	}
 	return
 }

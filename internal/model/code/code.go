@@ -13,6 +13,7 @@ var (
 	ErrAccountPassword       = response.NewCode(1002, "account password error", http.StatusUnauthorized)
 	ErrAccountMfaAlreadyBind = response.NewCode(1003, "account mfa already bind", http.StatusBadRequest)
 	ErrAccountMfaCode        = response.NewCode(1004, "account mfa code error", http.StatusBadRequest)
+	ErrAccountMfaNotBind     = response.NewCode(1005, "account mfa not bind", http.StatusBadRequest)
 	ErrUserNotExist          = response.NewCode(1100, "user not exist", http.StatusNotFound)
 )
 

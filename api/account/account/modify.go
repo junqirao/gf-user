@@ -2,6 +2,8 @@ package account
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+
+	"gf-user/internal/model"
 )
 
 type (
@@ -17,9 +19,10 @@ type (
 	ModifyAvatarRes   struct{}
 	ModifyPasswordReq struct {
 		g.Meta `path:"/v1/account/password" tags:"User" method:"post" summary:"User modify password"`
-		Old    string `json:"old" dc:"md5(md5(raw)+nonce)"`
-		New    string `json:"new" dc:"md5(raw)"`
-		Nonce  string `json:"nonce"`
+		model.MFACodeRequired
+		Old   string `json:"old" dc:"md5(md5(raw)+nonce)"`
+		New   string `json:"new" dc:"md5(raw)"`
+		Nonce string `json:"nonce"`
 	}
 	ModifyPasswordRes struct{}
 )
