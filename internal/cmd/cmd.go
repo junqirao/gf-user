@@ -10,6 +10,7 @@ import (
 	"github.com/junqirao/gocomponents/structs"
 
 	"gf-user/internal/controller/account"
+	"gf-user/internal/controller/config"
 	"gf-user/internal/controller/middleware"
 	"gf-user/internal/controller/space"
 	"gf-user/internal/controller/storage"
@@ -36,6 +37,7 @@ var (
 					// login & register
 					account.NewLogin(),
 				)
+				// biz
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.AuthToken)
 					group.Bind(
@@ -46,6 +48,14 @@ var (
 						account.NewAccount(),
 						// space
 						space.NewV1(),
+					)
+				})
+				// server administration
+				group.Group("/admin", func(group *ghttp.RouterGroup) {
+					group.Middleware(middleware.AuthToken)
+					group.Middleware(middleware.MustSuperAdmin)
+					group.Bind(
+						config.NewV1(),
 					)
 				})
 			})

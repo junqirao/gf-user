@@ -17,19 +17,21 @@ import (
 	"github.com/junqirao/gocomponents/kvdb"
 
 	"gf-user/internal/consts"
+	"gf-user/internal/logic/config"
 	"gf-user/internal/model"
 	"gf-user/internal/model/code"
 	"gf-user/internal/service"
 )
 
 func init() {
-	service.RegisterToken(newSToken(gctx.GetInitCtx()))
+	ctx := gctx.GetInitCtx()
+	config.MustInit(ctx)
+	service.RegisterToken(newSToken(ctx))
 }
 
 type (
 	sToken struct {
-		mu  sync.Locker
-		cfg model.UserTokenConfig
+		mu sync.Locker
 	}
 	refreshToken struct {
 		Key      string
@@ -38,38 +40,40 @@ type (
 )
 
 func newSToken(ctx context.Context) *sToken {
-	cfg := model.UserTokenConfig{}
-	v, err := g.Cfg().Get(ctx, "token")
-	if err == nil {
-		_ = v.Struct(&cfg)
-	}
-	if cfg.AccessTokenExpire <= 0 {
-		cfg.AccessTokenExpire = consts.DefaultAccessTokenExpire
-	}
-	if cfg.RefreshTokenExpire <= 0 {
-		cfg.RefreshTokenExpire = consts.DefaultRefreshTokenExpire
-	}
-	if cfg.TokenKey == "" {
-		cfg.TokenKey = consts.DefaultTokenKey
-	}
-	cfg.Print(ctx)
+	// cfg := service.Config().GetTokenConfig(ctx)
+	// cfg := model.UserTokenConfig{}
+	// v, err := g.Cfg().Get(ctx, "token")
+	// if err == nil {
+	// 	_ = v.Struct(&cfg)
+	// }
+	// if cfg.AccessTokenExpire <= 0 {
+	// 	cfg.AccessTokenExpire = consts.DefaultAccessTokenExpire
+	// }
+	// if cfg.RefreshTokenExpire <= 0 {
+	// 	cfg.RefreshTokenExpire = consts.DefaultRefreshTokenExpire
+	// }
+	// if cfg.TokenKey == "" {
+	// 	cfg.TokenKey = consts.DefaultTokenKey
+	// }
+	// cfg.Print(ctx)
 	mutex, err := kvdb.NewMutex(ctx, "user_token_handler")
 	if err != nil {
 		return nil
 	}
-	return &sToken{mu: mutex, cfg: cfg}
+	return &sToken{mu: mutex}
 }
 
 func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount) (accessToken string, refreshToken string, err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+	cfg := service.Config().GetTokenConfig(ctx)
 
 	refreshTokenKey := grand.S(8)
-	if accessToken, err = t.signAccessToken(user, refreshTokenKey); err != nil {
+	if accessToken, err = t.signAccessToken(cfg, user, refreshTokenKey); err != nil {
 		return
 	}
 	var exp time.Time
-	refreshToken, exp, err = t.signRefreshToken(user, refreshTokenKey)
+	refreshToken, exp, err = t.signRefreshToken(cfg, user, refreshTokenKey)
 	if err != nil {
 		return
 	}
@@ -94,9 +98,10 @@ func (t sToken) ValidAccessToken(ctx context.Context, accessToken string) (token
 			err = code.ErrInvalidToken.WithDetail(err.Error())
 		}
 	}()
+	cfg := service.Config().GetTokenConfig(ctx)
 	token, err := jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Name})).
 		ParseWithClaims(accessToken, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(t.cfg.TokenKey), nil
+			return []byte(cfg.TokenKey), nil
 		})
 	err = gerror.Cause(err)
 	if err != nil {
@@ -161,11 +166,12 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 	return
 }
 
-func (t sToken) ParseRefreshToken(_ context.Context, refreshToken string) (claims *model.RefreshTokenClaims, err error) {
+func (t sToken) ParseRefreshToken(ctx context.Context, refreshToken string) (claims *model.RefreshTokenClaims, err error) {
+	cfg := service.Config().GetTokenConfig(ctx)
 	claims = new(model.RefreshTokenClaims)
 	token, err := jwt.NewParser(jwt.WithValidMethods([]string{jwt.SigningMethodHS256.Name})).
 		ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte(t.cfg.TokenKey), nil
+			return []byte(cfg.TokenKey), nil
 		})
 	if err != nil {
 		return
@@ -194,11 +200,12 @@ func (t sToken) removeInvalidRefreshTokens(ctx context.Context, key string, rts 
 			return
 		}
 	}
+	cfg := service.Config().GetTokenConfig(ctx)
 	// 移除超限
-	if t.cfg.RefreshTokenLimit <= 0 {
+	if cfg.RefreshTokenLimit <= 0 {
 		return
 	}
-	overCount := int64(len(rts)) - expCount - t.cfg.RefreshTokenLimit
+	overCount := int64(len(rts)) - expCount - cfg.RefreshTokenLimit
 	if overCount <= 0 {
 		return
 	}
@@ -227,13 +234,13 @@ func (t sToken) getUserRefreshTokens(ctx context.Context, key string) (rts []*re
 	return
 }
 
-func (t sToken) signAccessToken(user *model.UserAccount, refreshTokenKey string) (accessToken string, err error) {
+func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string) (accessToken string, err error) {
 	ts := time.Now()
 	return jwt.NewWithClaims(jwt.SigningMethodHS256,
 		&model.AccessTokenClaims{
 			RegisteredClaims: jwt.RegisteredClaims{
 				Audience:  []string{gconv.String(user.Id)},
-				ExpiresAt: jwt.NewNumericDate(ts.Add(time.Second * time.Duration(t.cfg.AccessTokenExpire))), // 过期时间
+				ExpiresAt: jwt.NewNumericDate(ts.Add(time.Second * time.Duration(cfg.AccessTokenExpire))), // 过期时间
 				IssuedAt:  jwt.NewNumericDate(ts),
 				Issuer:    consts.DefaultTokenIssuer, // 签发人
 				NotBefore: jwt.NewNumericDate(ts),
@@ -242,12 +249,12 @@ func (t sToken) signAccessToken(user *model.UserAccount, refreshTokenKey string)
 			SpaceId: gconv.String(user.SpaceInfo.Id),
 			UserId:  gconv.String(user.UserInfo.Id),
 		},
-	).SignedString([]byte(t.cfg.TokenKey))
+	).SignedString([]byte(cfg.TokenKey))
 }
 
-func (t sToken) signRefreshToken(user *model.UserAccount, refreshTokenKey string) (refreshToken string, exp time.Time, err error) {
+func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string) (refreshToken string, exp time.Time, err error) {
 	ts := time.Now()
-	exp = ts.Add(time.Second * time.Duration(t.cfg.RefreshTokenExpire))
+	exp = ts.Add(time.Second * time.Duration(cfg.RefreshTokenExpire))
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256,
 		&model.RefreshTokenClaims{
 			Audience:  []string{gconv.String(user.Id)},
@@ -257,7 +264,7 @@ func (t sToken) signRefreshToken(user *model.UserAccount, refreshTokenKey string
 			NotBefore: jwt.NewNumericDate(ts),
 			Subject:   refreshTokenKey,
 		},
-	).SignedString([]byte(t.cfg.TokenKey))
+	).SignedString([]byte(cfg.TokenKey))
 	return
 }
 

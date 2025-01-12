@@ -3,6 +3,7 @@ package fn
 import (
 	"context"
 
+	"github.com/junqirao/gocomponents/kvdb"
 	"github.com/junqirao/gocomponents/launcher"
 
 	"gf-user/internal/dao"
@@ -14,6 +15,13 @@ func checkAndInitSpace() *launcher.HookTask {
 	return launcher.NewHookTask(
 		"check_and_init_space",
 		func(ctx context.Context) (err error) {
+			mutex, err := kvdb.NewMutex(ctx, "user_service_init_space")
+			if err != nil {
+				return err
+			}
+			mutex.Lock()
+			defer mutex.Unlock()
+
 			count, err := dao.Space.Ctx(ctx).Where(dao.Space.Columns().Id, packed.DefaultSpaceId).Count()
 			if err != nil {
 				return

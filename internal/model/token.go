@@ -19,10 +19,10 @@ type (
 	}
 	RefreshTokenClaims = jwt.RegisteredClaims
 	UserTokenConfig    struct {
-		AccessTokenExpire  int64  `json:"access_token_expire"`
-		RefreshTokenExpire int64  `json:"refresh_token_expire"`
+		AccessTokenExpire  int64  `json:"access_token_expire" default:"7200"`
+		RefreshTokenExpire int64  `json:"refresh_token_expire" default:"2592000"`
 		RefreshTokenLimit  int64  `json:"refresh_token_limit"`
-		TokenKey           string `json:"token_key"`
+		TokenKey           string `json:"token_key,omitempty" default:"dEfaUlTuSerT0k3nK3y"`
 	}
 	TokenInfo struct {
 		AccountId       string    `json:"account_id"`

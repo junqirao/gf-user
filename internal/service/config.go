@@ -1,0 +1,33 @@
+// ================================================================================
+// Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
+// You can delete these comments if you wish manually maintain this interface file.
+// ================================================================================
+
+package service
+
+import (
+	"context"
+	"gf-user/internal/model"
+)
+
+type (
+	IConfig interface {
+		GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig)
+		SetTokenConfig(ctx context.Context, in *model.UserTokenConfig) (err error)
+	}
+)
+
+var (
+	localConfig IConfig
+)
+
+func Config() IConfig {
+	if localConfig == nil {
+		panic("implement not found for interface IConfig, forgot register?")
+	}
+	return localConfig
+}
+
+func RegisterConfig(i IConfig) {
+	localConfig = i
+}
