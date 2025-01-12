@@ -8,10 +8,12 @@ import (
 
 // user & account
 var (
-	ErrAccountNotExist = response.NewCode(1000, "account not exist", http.StatusNotFound)
-	ErrAccountLocked   = response.NewCode(1001, "account frozen", http.StatusLocked)
-	ErrAccountPassword = response.NewCode(1002, "account password error", http.StatusUnauthorized)
-	ErrUserNotExist    = response.NewCode(1100, "user not exist", http.StatusNotFound)
+	ErrAccountNotExist       = response.NewCode(1000, "account not exist", http.StatusNotFound)
+	ErrAccountLocked         = response.NewCode(1001, "account frozen", http.StatusLocked)
+	ErrAccountPassword       = response.NewCode(1002, "account password error", http.StatusUnauthorized)
+	ErrAccountMfaAlreadyBind = response.NewCode(1003, "account mfa already bind", http.StatusBadRequest)
+	ErrAccountMfaCode        = response.NewCode(1004, "account mfa code error", http.StatusBadRequest)
+	ErrUserNotExist          = response.NewCode(1100, "user not exist", http.StatusNotFound)
 )
 
 // token

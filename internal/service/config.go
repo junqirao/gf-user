@@ -13,9 +13,10 @@ import (
 type (
 	IConfig interface {
 		GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig)
-		Get(ctx context.Context, sto string, key string, ptr any) (err error)
-		Set(ctx context.Context, sto string, key string, val any) (err error)
-		SetIfNotExist(ctx context.Context, name string, key string, val any) (err error)
+		GetMFAConfig(ctx context.Context) (res *model.MFAConfig)
+		Get(ctx context.Context, key string, ptr any) (err error)
+		Set(ctx context.Context, key string, val any) (err error)
+		Exist(ctx context.Context, key string) (exist bool, err error)
 	}
 )
 

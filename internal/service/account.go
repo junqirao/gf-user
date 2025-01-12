@@ -19,6 +19,8 @@ type (
 		RefreshToken(ctx context.Context, spaceId int64, refreshToken string) (res *model.UserAccountLoginInfo, err error)
 		GetUserAccount(ctx context.Context, spaceId ...int64) (ua *model.UserAccount, err error)
 		GetAccount(ctx context.Context, account string) (acc *do.Account, err error)
+		GenerateMFAQRCode(ctx context.Context) (qrCode string, err error)
+		BindMFA(ctx context.Context, mfaCode string) (err error)
 		ModifyName(ctx context.Context, name string) (err error)
 		ModifyAvatar(ctx context.Context, avatar string) (err error)
 		ModifyPassword(ctx context.Context, oldPwd string, newPwd string, nonce string) (err error)

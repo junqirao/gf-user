@@ -13,6 +13,8 @@ import (
 )
 
 type IAccountAccount interface {
+	GetBindMFAGetQRCode(ctx context.Context, req *account.GetBindMFAGetQRCodeReq) (res *account.GetBindMFAGetQRCodeRes, err error)
+	BindMFA(ctx context.Context, req *account.BindMFAReq) (res *account.BindMFARes, err error)
 	ModifyName(ctx context.Context, req *account.ModifyNameReq) (res *account.ModifyNameRes, err error)
 	ModifyAvatar(ctx context.Context, req *account.ModifyAvatarReq) (res *account.ModifyAvatarRes, err error)
 	ModifyPassword(ctx context.Context, req *account.ModifyPasswordReq) (res *account.ModifyPasswordRes, err error)

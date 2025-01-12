@@ -31,8 +31,23 @@ const (
 
 // space
 const (
+	DefaultSpaceId = 1
+
 	SpaceInvitationStatusCreate = 0
 	SpaceInvitationStatusAccept = 1
 	SpaceInvitationStatusReject = 2
 	SpaceInvitationStatusCancel = 3
+)
+
+// config
+const (
+	// token
+
+	ConfigKeyToken     = "token"
+	ConfigStoNameToken = "token_config"
+
+	// mfa
+
+	ConfigKeyMfa     = "mfa"
+	ConfigStoNameMfa = "mfa_config"
 )

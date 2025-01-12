@@ -6,9 +6,9 @@ import (
 	"github.com/junqirao/gocomponents/kvdb"
 	"github.com/junqirao/gocomponents/launcher"
 
+	"gf-user/internal/consts"
 	"gf-user/internal/dao"
 	"gf-user/internal/model/entity"
-	"gf-user/internal/packed"
 )
 
 func checkAndInitSpace() *launcher.HookTask {
@@ -22,7 +22,7 @@ func checkAndInitSpace() *launcher.HookTask {
 			mutex.Lock()
 			defer mutex.Unlock()
 
-			count, err := dao.Space.Ctx(ctx).Where(dao.Space.Columns().Id, packed.DefaultSpaceId).Count()
+			count, err := dao.Space.Ctx(ctx).Where(dao.Space.Columns().Id, consts.DefaultSpaceId).Count()
 			if err != nil {
 				return
 			}
@@ -31,7 +31,7 @@ func checkAndInitSpace() *launcher.HookTask {
 			}
 
 			_, err = dao.Space.Ctx(ctx).Insert(entity.Space{
-				Id:          packed.DefaultSpaceId,
+				Id:          consts.DefaultSpaceId,
 				Name:        "Default",
 				Owner:       "system",
 				Description: "Default",

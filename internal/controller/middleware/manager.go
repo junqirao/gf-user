@@ -4,7 +4,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/junqirao/gocomponents/response"
 
-	"gf-user/internal/packed"
+	"gf-user/internal/consts"
 	"gf-user/internal/service"
 )
 
@@ -21,7 +21,7 @@ func MustSuperAdmin(r *ghttp.Request) {
 	}
 
 	info := service.Token().GetTokenInfoFromCtx(r.Context())
-	if info.SpaceId != packed.DefaultSpaceId {
+	if info.SpaceId != consts.DefaultSpaceId {
 		response.Error(r, response.CodePermissionDeny.WithDetail("invalid space"))
 		return
 	}

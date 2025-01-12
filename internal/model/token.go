@@ -1,10 +1,8 @@
 package model
 
 import (
-	"context"
 	"time"
 
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -18,13 +16,7 @@ type (
 		UserId  string `json:"uid,omitempty"`
 	}
 	RefreshTokenClaims = jwt.RegisteredClaims
-	UserTokenConfig    struct {
-		AccessTokenExpire  int64  `json:"access_token_expire" default:"7200"`
-		RefreshTokenExpire int64  `json:"refresh_token_expire" default:"2592000"`
-		RefreshTokenLimit  int64  `json:"refresh_token_limit"`
-		TokenKey           string `json:"token_key,omitempty" default:"dEfaUlTuSerT0k3nK3y"`
-	}
-	TokenInfo struct {
+	TokenInfo          struct {
 		AccountId       string    `json:"account_id"`
 		SpaceId         int64     `json:"space_id"`
 		UserId          string    `json:"user_id"`
@@ -33,7 +25,3 @@ type (
 		AccessToken     string    `json:"access_token"`
 	}
 )
-
-func (u UserTokenConfig) Print(ctx context.Context) {
-	g.Log().Infof(ctx, "user token config: access_token_expire: %d, refresh_token_expire: %d, refresh_token_limit: %d", u.AccessTokenExpire, u.RefreshTokenExpire, u.RefreshTokenLimit)
-}

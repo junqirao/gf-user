@@ -6,11 +6,11 @@ import (
 	"gf-user/internal/model"
 )
 
+// Token
 type (
 	SetTokenConfigReq struct {
 		g.Meta `path:"/v1/config/token" tags:"Config" method:"post" summary:"set token config"`
-		model.AuthorizationRequired
-		Content *model.UserTokenConfig `json:"content"`
+		SetConfig
 	}
 	SetTokenConfigRes struct{}
 

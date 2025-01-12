@@ -28,6 +28,7 @@ type AccountColumns struct {
 	Name      string //
 	Email     string //
 	Avatar    string //
+	Mfa       string //
 	CreatedAt string //
 	UpdateAt  string //
 	Extra     string // extra
@@ -43,6 +44,7 @@ var accountColumns = AccountColumns{
 	Name:      "name",
 	Email:     "email",
 	Avatar:    "avatar",
+	Mfa:       "mfa",
 	CreatedAt: "created_at",
 	UpdateAt:  "update_at",
 	Extra:     "extra",

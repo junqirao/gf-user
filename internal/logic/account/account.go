@@ -18,7 +18,6 @@ import (
 	"gf-user/internal/model/code"
 	"gf-user/internal/model/do"
 	"gf-user/internal/model/entity"
-	"gf-user/internal/packed"
 	"gf-user/internal/service"
 )
 
@@ -62,7 +61,7 @@ func (s sAccount) Register(ctx context.Context, in *model.AccountRegisterInput) 
 		}
 		_, err = dao.User.Ctx(ctx).Insert(entity.User{
 			Account:   ea.Id,
-			Space:     packed.DefaultSpaceId,
+			Space:     consts.DefaultSpaceId,
 			Type:      consts.UserTypeNormal,
 			Name:      in.Name,
 			CreatedAt: now,
@@ -77,7 +76,7 @@ func (s sAccount) Register(ctx context.Context, in *model.AccountRegisterInput) 
 	if err != nil {
 		return
 	}
-	usr, err := service.User().GetUserByAccountId(ctx, ea.Id, packed.DefaultSpaceId)
+	usr, err := service.User().GetUserByAccountId(ctx, ea.Id, consts.DefaultSpaceId)
 	if err != nil {
 		return
 	}
@@ -113,7 +112,7 @@ func (s sAccount) UserLogin(ctx context.Context, in *model.AccountLoginInput) (o
 
 	user, err := dao.User.Ctx(ctx).
 		Where(dao.User.Columns().Account, account.Id).
-		Where(dao.User.Columns().Space, packed.DefaultSpaceId).
+		Where(dao.User.Columns().Space, consts.DefaultSpaceId).
 		One()
 	if err != nil {
 		return

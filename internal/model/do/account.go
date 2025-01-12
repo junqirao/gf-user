@@ -20,6 +20,7 @@ type Account struct {
 	Name      interface{} //
 	Email     interface{} //
 	Avatar    interface{} //
+	Mfa       []byte      //
 	CreatedAt *gtime.Time //
 	UpdateAt  *gtime.Time //
 	Extra     interface{} // extra

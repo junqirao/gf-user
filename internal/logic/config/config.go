@@ -3,20 +3,24 @@ package config
 import (
 	"context"
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/junqirao/gocomponents/kvdb"
 	"github.com/junqirao/gocomponents/structs"
 
+	"gf-user/internal/consts"
 	"gf-user/internal/model"
-	"gf-user/internal/packed"
 	"gf-user/internal/service"
 )
 
 var (
 	once = sync.Once{}
+)
+
+const (
+	stoName = "user_service_config"
 )
 
 // MustInit explicitly, must init before any other service
@@ -34,7 +38,7 @@ type sConfig struct {
 
 func (s sConfig) GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig) {
 	res = new(model.UserTokenConfig)
-	err := s.getOne(ctx, s.getName(packed.ConfigStoNameToken), packed.ConfigKeyToken, res)
+	err := s.getOne(ctx, stoName, consts.ConfigKeyToken, res)
 	if err != nil {
 		g.Log().Warningf(ctx, "failed to get token config: %s", err.Error())
 		return
@@ -42,33 +46,35 @@ func (s sConfig) GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig
 	return
 }
 
-func (s sConfig) Get(ctx context.Context, sto, key string, ptr any) (err error) {
-	return s.getOne(ctx, s.getName(sto), key, ptr)
+func (s sConfig) GetMFAConfig(ctx context.Context) (res *model.MFAConfig) {
+	res = new(model.MFAConfig)
+	err := s.getOne(ctx, stoName, consts.ConfigKeyMfa, res)
+	if err != nil {
+		g.Log().Warningf(ctx, "failed to get mfa config: %s", err.Error())
+		return
+	}
+	return
 }
 
-func (s sConfig) Set(ctx context.Context, sto, key string, val any) (err error) {
-	return s.set(ctx, s.getName(sto), key, val)
+func (s sConfig) Get(ctx context.Context, key string, ptr any) (err error) {
+	return s.getOne(ctx, stoName, key, ptr)
 }
 
-func (s sConfig) SetIfNotExist(ctx context.Context, name, key string, val any) (err error) {
+func (s sConfig) Set(ctx context.Context, key string, val any) (err error) {
+	return s.set(ctx, stoName, key, val)
+}
+
+func (s sConfig) Exist(ctx context.Context, key string) (exist bool, err error) {
 	var res []*kvdb.KV
-	res, err = kvdb.Storages.GetStorage(name).Get(ctx, key)
+	res, err = kvdb.Storages.GetStorage(stoName).Get(ctx, key)
 	switch {
 	case err == nil:
-		if len(res) > 0 {
-			return
-		}
+		exist = len(res) > 0
 	case errors.Is(err, kvdb.ErrStorageNotFound):
 		err = nil
 	default:
-		return
 	}
-
-	return kvdb.Storages.GetStorage(name).Set(ctx, key, val)
-}
-
-func (s sConfig) getName(topic string) string {
-	return fmt.Sprintf("user_servic_config_%s", topic)
+	return
 }
 
 func (s sConfig) getOne(ctx context.Context, name, key string, ptr any, def ...any) (err error) {
@@ -92,5 +98,23 @@ func (s sConfig) getOne(ctx context.Context, name, key string, ptr any, def ...a
 }
 
 func (s sConfig) set(ctx context.Context, name, key string, val any) (err error) {
-	return kvdb.Storages.GetStorage(name).Set(ctx, key, val)
+	sto := kvdb.Storages.GetStorage(name)
+	kvs, err := sto.Get(ctx, key)
+	switch {
+	case err == nil:
+	case errors.Is(err, kvdb.ErrStorageNotFound):
+		err = nil
+	default:
+		return
+	}
+
+	if len(kvs) > 0 {
+		curr := kvs[0].Value.Map()
+		m := gconv.Map(val)
+		for k, v := range m {
+			curr[k] = v
+		}
+		val = curr
+	}
+	return sto.Set(ctx, key, val)
 }

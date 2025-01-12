@@ -18,6 +18,7 @@ type Account struct {
 	Name      string      `json:"name"      orm:"name"       description:""`                     //
 	Email     string      `json:"email"     orm:"email"      description:""`                     //
 	Avatar    string      `json:"avatar"    orm:"avatar"     description:""`                     //
+	Mfa       []byte      `json:"mfa"       orm:"mfa"        description:""`                     //
 	CreatedAt *gtime.Time `json:"createdAt" orm:"created_at" description:""`                     //
 	UpdateAt  *gtime.Time `json:"updateAt"  orm:"update_at"  description:""`                     //
 	Extra     string      `json:"extra"     orm:"extra"      description:"extra"`                // extra
