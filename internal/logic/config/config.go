@@ -43,8 +43,6 @@ func (s sConfig) GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig
 		g.Log().Warningf(ctx, "failed to get token config: %s", err.Error())
 		return
 	}
-	// desensitization
-	res.TokenKey = ""
 	return
 }
 

@@ -40,22 +40,6 @@ type (
 )
 
 func newSToken(ctx context.Context) *sToken {
-	// cfg := service.Config().GetTokenConfig(ctx)
-	// cfg := model.UserTokenConfig{}
-	// v, err := g.Cfg().Get(ctx, "token")
-	// if err == nil {
-	// 	_ = v.Struct(&cfg)
-	// }
-	// if cfg.AccessTokenExpire <= 0 {
-	// 	cfg.AccessTokenExpire = consts.DefaultAccessTokenExpire
-	// }
-	// if cfg.RefreshTokenExpire <= 0 {
-	// 	cfg.RefreshTokenExpire = consts.DefaultRefreshTokenExpire
-	// }
-	// if cfg.TokenKey == "" {
-	// 	cfg.TokenKey = consts.DefaultTokenKey
-	// }
-	// cfg.Print(ctx)
 	mutex, err := kvdb.NewMutex(ctx, "user_token_handler")
 	if err != nil {
 		return nil
