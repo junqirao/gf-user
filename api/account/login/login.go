@@ -14,4 +14,9 @@ type (
 		Nonce    string `json:"nonce"`
 	}
 	UserLoginRes model.UserAccountLoginInfo
+
+	GetLoginConfigReq struct {
+		g.Meta `path:"/v1/account/login/config" tags:"User" method:"get" summary:"get login config"`
+	}
+	GetLoginConfigRes model.LoginConfig
 )

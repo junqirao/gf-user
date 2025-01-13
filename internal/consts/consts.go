@@ -50,4 +50,30 @@ const (
 
 	ConfigKeyMfa     = "mfa"
 	ConfigStoNameMfa = "mfa_config"
+	ConfigKeyLogin   = "login"
+)
+
+type LoginMode int8
+
+func (m LoginMode) Name() string {
+	switch m {
+	case LoginModeMFA:
+		return "MFA"
+	case LoginModePassword:
+		return "Password"
+	case LoginModePasswordMFA:
+		return "Password+MFA"
+	default:
+		return "Unknown"
+	}
+}
+
+const (
+	// LoginModePassword only password login
+	LoginModePassword LoginMode = 1 << iota
+	// LoginModeMFA only mfa login
+	LoginModeMFA
+
+	// LoginModePasswordMFA combine LoginModePassword and LoginModeMFA
+	LoginModePasswordMFA = LoginModePassword | LoginModeMFA
 )

@@ -56,6 +56,16 @@ func (s sConfig) GetMFAConfig(ctx context.Context) (res *model.MFAConfig) {
 	return
 }
 
+func (s sConfig) GetLoginConfig(ctx context.Context) (res *model.LoginConfig) {
+	res = new(model.LoginConfig)
+	err := s.getOne(ctx, stoName, consts.ConfigKeyLogin, res)
+	if err != nil {
+		g.Log().Warningf(ctx, "failed to get login config: %s", err.Error())
+		return
+	}
+	return
+}
+
 func (s sConfig) Get(ctx context.Context, key string, ptr any) (err error) {
 	return s.getOne(ctx, stoName, key, ptr)
 }

@@ -22,6 +22,7 @@ type IAccountAccount interface {
 
 type IAccountLogin interface {
 	UserLogin(ctx context.Context, req *login.UserLoginReq) (res *login.UserLoginRes, err error)
+	GetLoginConfig(ctx context.Context, req *login.GetLoginConfigReq) (res *login.GetLoginConfigRes, err error)
 	Register(ctx context.Context, req *login.RegisterReq) (res *login.RegisterRes, err error)
 	RefreshToken(ctx context.Context, req *login.RefreshTokenReq) (res *login.RefreshTokenRes, err error)
 }

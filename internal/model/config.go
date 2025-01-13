@@ -1,5 +1,9 @@
 package model
 
+import (
+	"gf-user/internal/consts"
+)
+
 type (
 	UserTokenConfig struct {
 		AccessTokenExpire  int64  `json:"access_token_expire" default:"7200"`
@@ -14,5 +18,15 @@ type (
 		VerifyDiscrepancy int    `json:"verify_discrepancy,omitempty" default:"1"`
 		Title             string `json:"title,omitempty" default:"UserCenter"`
 		Secret            string `json:"secret,omitempty"`
+	}
+	LoginConfig struct {
+		LoginMode       consts.LoginMode   `json:"login_mode" default:"1"`
+		EnableRegister  bool               `json:"enable_register" default:"false"`
+		RememberAccount bool               `json:"remember_account" default:"false"`
+		MaximumFail     int                `json:"maximum_fail" default:"5"`
+		Display         LoginDisplayConfig `json:"display"`
+	}
+	LoginDisplayConfig struct {
+		Notice string `json:"notice"`
 	}
 )

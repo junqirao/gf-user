@@ -14,6 +14,7 @@ type (
 	IConfig interface {
 		GetTokenConfig(ctx context.Context) (res *model.UserTokenConfig)
 		GetMFAConfig(ctx context.Context) (res *model.MFAConfig)
+		GetLoginConfig(ctx context.Context) (res *model.LoginConfig)
 		Get(ctx context.Context, key string, ptr any) (err error)
 		Set(ctx context.Context, key string, val any) (err error)
 		Exist(ctx context.Context, key string) (exist bool, err error)
