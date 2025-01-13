@@ -15,6 +15,11 @@ import (
 
 func BeforeTasks() []*launcher.HookTask {
 	return []*launcher.HookTask{
+		launcher.NewHookTask("setup_go_frame_module", func(ctx context.Context) error {
+			setupPProf(ctx)
+			setupDebugMode(ctx)
+			return nil
+		}),
 		checkAndInitSpace(),
 		launcher.NewHookTask("load_struct_mapping", func(ctx context.Context) error {
 			return structs.LoadMappingFromEmbed(ctx, packed.Embed)
