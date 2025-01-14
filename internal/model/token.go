@@ -15,8 +15,11 @@ type (
 		SpaceId string `json:"sid,omitempty"`
 		UserId  string `json:"uid,omitempty"`
 	}
-	RefreshTokenClaims = jwt.RegisteredClaims
-	TokenInfo          struct {
+	RefreshTokenClaims struct {
+		jwt.RegisteredClaims
+		ClientIP string `json:"cip,omitempty"`
+	}
+	TokenInfo struct {
 		AccountId       string    `json:"account_id"`
 		SpaceId         int64     `json:"space_id"`
 		UserId          string    `json:"user_id"`

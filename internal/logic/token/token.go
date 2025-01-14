@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/grand"
@@ -56,8 +57,12 @@ func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount
 	if accessToken, err = t.signAccessToken(cfg, user, refreshTokenKey); err != nil {
 		return
 	}
+	clientIp := ""
+	if req := ghttp.RequestFromCtx(ctx); req != nil {
+		clientIp = req.GetClientIp()
+	}
 	var exp time.Time
-	refreshToken, exp, err = t.signRefreshToken(cfg, user, refreshTokenKey)
+	refreshToken, exp, err = t.signRefreshToken(cfg, user, refreshTokenKey, clientIp)
 	if err != nil {
 		return
 	}
@@ -236,17 +241,20 @@ func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAcco
 	).SignedString([]byte(cfg.TokenKey))
 }
 
-func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string) (refreshToken string, exp time.Time, err error) {
+func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey, clientIp string) (refreshToken string, exp time.Time, err error) {
 	ts := time.Now()
 	exp = ts.Add(time.Second * time.Duration(cfg.RefreshTokenExpire))
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256,
 		&model.RefreshTokenClaims{
-			Audience:  []string{gconv.String(user.Id)},
-			ExpiresAt: jwt.NewNumericDate(exp), // 过期时间
-			IssuedAt:  jwt.NewNumericDate(ts),
-			Issuer:    consts.DefaultTokenIssuer, // 签发人
-			NotBefore: jwt.NewNumericDate(ts),
-			Subject:   refreshTokenKey,
+			RegisteredClaims: jwt.RegisteredClaims{
+				Audience:  []string{gconv.String(user.Id)},
+				ExpiresAt: jwt.NewNumericDate(exp), // 过期时间
+				IssuedAt:  jwt.NewNumericDate(ts),
+				Issuer:    consts.DefaultTokenIssuer, // 签发人
+				NotBefore: jwt.NewNumericDate(ts),
+				Subject:   refreshTokenKey,
+			},
+			ClientIP: clientIp,
 		},
 	).SignedString([]byte(cfg.TokenKey))
 	return
