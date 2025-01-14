@@ -136,6 +136,21 @@ func (s sAccount) UserLogin(ctx context.Context, in *model.AccountLoginInput) (o
 	return
 }
 
+func (s sAccount) UserLogout(ctx context.Context, refreshToken string) (err error) {
+	claims, err := service.Token().ParseRefreshToken(ctx, refreshToken)
+	if err != nil {
+		return
+	}
+
+	accountId := ""
+	if len(claims.Audience) == 0 {
+		return
+	}
+	accountId = claims.Audience[0]
+	err = service.Token().RemoveRefreshToken(ctx, accountId, claims)
+	return
+}
+
 func (s sAccount) IsValid(ctx context.Context, accountId string) (acc *do.Account, err error) {
 	v, err := dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, accountId).One()
 	if err != nil {

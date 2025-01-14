@@ -155,6 +155,11 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 	return
 }
 
+func (t sToken) RemoveRefreshToken(ctx context.Context, accountId string, claims *model.RefreshTokenClaims) (err error) {
+	_, err = g.Redis().ZRem(ctx, t.getUserRefreshTokenKey(accountId), claims.Subject)
+	return
+}
+
 func (t sToken) ParseRefreshToken(ctx context.Context, refreshToken string) (claims *model.RefreshTokenClaims, err error) {
 	cfg := service.Config().GetTokenConfig(ctx)
 	claims = new(model.RefreshTokenClaims)

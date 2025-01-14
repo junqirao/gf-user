@@ -19,4 +19,10 @@ type (
 		g.Meta `path:"/v1/account/login/config" tags:"User" method:"get" summary:"get login config"`
 	}
 	GetLoginConfigRes model.LoginConfig
+
+	UserLogoutReq struct {
+		g.Meta       `path:"/v1/account/user/logout" tags:"User" method:"post" summary:"User logout"`
+		RefreshToken string `json:"refresh_token" v:"required"`
+	}
+	UserLogoutRes struct{}
 )
