@@ -48,7 +48,7 @@ func newSToken(ctx context.Context) *sToken {
 	return &sToken{mu: mutex}
 }
 
-func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount) (accessToken string, refreshToken string, err error) {
+func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount, extra model.RefreshTokenExtraData) (accessToken string, refreshToken string, err error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	cfg := service.Config().GetTokenConfig(ctx)
@@ -57,12 +57,9 @@ func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount
 	if accessToken, err = t.signAccessToken(cfg, user, refreshTokenKey); err != nil {
 		return
 	}
-	clientIp := ""
-	if req := ghttp.RequestFromCtx(ctx); req != nil {
-		clientIp = req.GetClientIp()
-	}
+
 	var exp time.Time
-	refreshToken, exp, err = t.signRefreshToken(cfg, user, refreshTokenKey, clientIp)
+	refreshToken, exp, err = t.signRefreshToken(cfg, user, refreshTokenKey, extra)
 	if err != nil {
 		return
 	}
@@ -146,7 +143,14 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 			if _, err = g.Redis().ZRem(ctx, key, rt.Key); err != nil {
 				return
 			}
-			newAccessToken, newRefreshToken, err = t.GenerateAccessToken(ctx, user)
+			ext := model.RefreshTokenExtraData{
+				From: claims.From,
+			}
+			if req := ghttp.RequestFromCtx(ctx); req != nil {
+				ext.ClientIP = req.GetClientIp()
+				ext.UA = req.UserAgent()
+			}
+			newAccessToken, newRefreshToken, err = t.GenerateAccessToken(ctx, user, ext)
 			return
 		}
 	}
@@ -246,7 +250,7 @@ func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAcco
 	).SignedString([]byte(cfg.TokenKey))
 }
 
-func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey, clientIp string) (refreshToken string, exp time.Time, err error) {
+func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string, extra model.RefreshTokenExtraData) (refreshToken string, exp time.Time, err error) {
 	ts := time.Now()
 	exp = ts.Add(time.Second * time.Duration(cfg.RefreshTokenExpire))
 	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256,
@@ -259,7 +263,7 @@ func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAcc
 				NotBefore: jwt.NewNumericDate(ts),
 				Subject:   refreshTokenKey,
 			},
-			ClientIP: clientIp,
+			RefreshTokenExtraData: extra,
 		},
 	).SignedString([]byte(cfg.TokenKey))
 	return

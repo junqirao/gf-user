@@ -12,6 +12,7 @@ type (
 		Account  string `json:"account"`
 		Password string `json:"password"`
 		Nonce    string `json:"nonce"`
+		From     string `json:"from"`
 	}
 	UserLoginRes model.UserAccountLoginInfo
 

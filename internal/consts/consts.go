@@ -29,6 +29,13 @@ const (
 	CtxKeyTokenInfo = "__token_info"
 )
 
+// token from
+const (
+	TokenFromApp     = "app"
+	TokenFromBrowser = "browser"
+	TokenFromUnknown = "unknown"
+)
+
 // space
 const (
 	DefaultSpaceId = 1

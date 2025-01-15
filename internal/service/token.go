@@ -12,7 +12,7 @@ import (
 
 type (
 	IToken interface {
-		GenerateAccessToken(ctx context.Context, user *model.UserAccount) (accessToken string, refreshToken string, err error)
+		GenerateAccessToken(ctx context.Context, user *model.UserAccount, extra model.RefreshTokenExtraData) (accessToken string, refreshToken string, err error)
 		ValidAccessToken(ctx context.Context, accessToken string) (tokenInfo *model.TokenInfo, err error)
 		// GetTokenInfoFromCtx only work under middleware.AuthToken
 		GetTokenInfoFromCtx(ctx context.Context) (tokenInfo model.TokenInfo)

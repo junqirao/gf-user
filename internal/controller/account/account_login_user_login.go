@@ -13,6 +13,7 @@ func (c *ControllerLogin) UserLogin(ctx context.Context, req *login.UserLoginReq
 		Account:  req.Account,
 		Password: req.Password,
 		Nonce:    req.Nonce,
+		From:     req.From,
 	})
 	if err != nil {
 		return

@@ -7,6 +7,7 @@ import (
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/junqirao/gocomponents/response"
@@ -132,7 +133,18 @@ func (s sAccount) UserLogin(ctx context.Context, in *model.AccountLoginInput) (o
 	out = &model.UserAccountLoginInfo{
 		UserAccount: ua,
 	}
-	out.AccessToken, out.RefreshToken, err = service.Token().GenerateAccessToken(ctx, out.UserAccount)
+
+	ext := model.RefreshTokenExtraData{
+		From: consts.TokenFromUnknown,
+	}
+	if req := ghttp.RequestFromCtx(ctx); req != nil {
+		ext.ClientIP = req.GetClientIp()
+		ext.UA = req.UserAgent()
+	}
+	if in.From != "" {
+		ext.From = in.From
+	}
+	out.AccessToken, out.RefreshToken, err = service.Token().GenerateAccessToken(ctx, out.UserAccount, ext)
 	return
 }
 

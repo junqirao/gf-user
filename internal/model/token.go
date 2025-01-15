@@ -17,7 +17,12 @@ type (
 	}
 	RefreshTokenClaims struct {
 		jwt.RegisteredClaims
+		RefreshTokenExtraData
+	}
+	RefreshTokenExtraData struct {
 		ClientIP string `json:"cip,omitempty"`
+		From     string `json:"frm,omitempty"`
+		UA       string `json:"uag,omitempty"`
 	}
 	TokenInfo struct {
 		AccountId       string    `json:"account_id"`
