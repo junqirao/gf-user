@@ -9,17 +9,22 @@ import (
 	"github.com/gogf/gf/v2/encoding/gbase64"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/gipv4"
 
 	"gf-user/internal/model"
 	"gf-user/internal/packed/ipgeo"
 )
 
-func (t sToken) ListUserRefreshTokenDetails(ctx context.Context) (dts []*model.RefreshTokenDetail, err error) {
+func (t sToken) ListUserRefreshTokenDetails(ctx context.Context, locale string) (dts []*model.RefreshTokenDetail, err error) {
 	var (
 		info   = t.GetTokenInfoFromCtx(ctx)
 		rtsMap = make(map[string]*refreshToken)
 		keys   []string
 	)
+
+	if locale == "" {
+		locale = "en"
+	}
 
 	rts, err := t.getUserRefreshTokens(ctx, t.getUserRefreshTokenKey(info.AccountId))
 	if err != nil {
@@ -55,14 +60,30 @@ func (t sToken) ListUserRefreshTokenDetails(ctx context.Context) (dts []*model.R
 			ExpireAt:  rtsMap[key].ExpireAt,
 		}
 		if detail.IP != "" {
-			city, err := ipgeo.DB().City(net.ParseIP(detail.IP))
-			if err != nil {
-				g.Log().Warningf(ctx, "ipgeo get [ip:%s] city failed: %v", detail.IP, err)
-				continue
+			if gipv4.IsIntranet(detail.IP) {
+				detail.City = "Local"
+				detail.Country = "Server"
+			} else {
+				city, err := ipgeo.DB().City(net.ParseIP(detail.IP))
+				if err != nil {
+					g.Log().Warningf(ctx, "ipgeo get [ip:%s] city failed: %v", detail.IP, err)
+					continue
+				}
+				detail.City = city.City.Names[locale]
+				detail.Country = city.Country.Names[locale]
+				detail.CountryISO = city.Country.IsoCode
+
+				// mask ip
+				ipParts := strings.Split(detail.IP, ".")
+				for i, part := range ipParts {
+					if i == 0 || i == len(ipParts)-1 {
+						continue
+					}
+					ipParts[i] = strings.Repeat("*", len(part))
+				}
+
+				detail.IP = strings.Join(ipParts, ".")
 			}
-			detail.City = city.City.Names
-			detail.Country = city.Country.Names
-			detail.CountryISO = city.Country.IsoCode
 		}
 		dts = append(dts, detail)
 	}

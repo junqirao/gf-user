@@ -7,8 +7,8 @@ import (
 	"gf-user/internal/service"
 )
 
-func (c *ControllerAccount) GetTokenDetailList(ctx context.Context, _ *account.GetTokenDetailListReq) (res *account.GetTokenDetailListRes, err error) {
-	details, err := service.Token().ListUserRefreshTokenDetails(ctx)
+func (c *ControllerAccount) GetTokenDetailList(ctx context.Context, req *account.GetTokenDetailListReq) (res *account.GetTokenDetailListRes, err error) {
+	details, err := service.Token().ListUserRefreshTokenDetails(ctx, req.Locale)
 	if err != nil {
 		return
 	}

@@ -33,13 +33,13 @@ type (
 		AccessToken     string    `json:"access_token"`
 	}
 	RefreshTokenDetail struct {
-		Key        string            `json:"key"`
-		City       map[string]string `json:"city"`
-		Country    map[string]string `json:"country"`
-		CountryISO string            `json:"country_iso"`
-		IP         string            `json:"ip"`
-		UserAgent  string            `json:"user_agent"`
-		From       string            `json:"from"`
-		ExpireAt   int64             `json:"expire_at"`
+		Key        string `json:"key"`
+		City       string `json:"city"`
+		Country    string `json:"country"`
+		CountryISO string `json:"country_iso"`
+		IP         string `json:"ip"`
+		UserAgent  string `json:"user_agent"`
+		From       string `json:"from"`
+		ExpireAt   int64  `json:"expire_at"`
 	}
 )
