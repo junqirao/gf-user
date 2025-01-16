@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/encoding/gbase64"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -66,6 +67,10 @@ func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount
 
 	key := t.getUserRefreshTokenKey(user.Id)
 	if _, err = g.Redis().ZAdd(ctx, key, &gredis.ZAddOption{}, gredis.ZAddMember{Score: float64(exp.Unix()), Member: refreshTokenKey}); err != nil {
+		return
+	}
+
+	if err = t.storeExtraInfo(ctx, cfg, user.Id, refreshTokenKey, extra); err != nil {
 		return
 	}
 
@@ -160,7 +165,7 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 }
 
 func (t sToken) RemoveRefreshToken(ctx context.Context, accountId string, claims *model.RefreshTokenClaims) (err error) {
-	_, err = g.Redis().ZRem(ctx, t.getUserRefreshTokenKey(accountId), claims.Subject)
+	err = t.removeRefreshToken(ctx, accountId, claims.Subject)
 	return
 }
 
@@ -271,4 +276,28 @@ func (t sToken) signRefreshToken(cfg *model.UserTokenConfig, user *model.UserAcc
 
 func (t sToken) getUserRefreshTokenKey(id any) string {
 	return fmt.Sprintf("user:refresh_token:%v", id)
+}
+
+func (t sToken) getUserRefreshTokenExtraDataKey(id any, key string) string {
+	return fmt.Sprintf("user:refresh_token:extra:%v:%s", id, key)
+}
+
+func (t sToken) storeExtraInfo(ctx context.Context,
+	cfg *model.UserTokenConfig,
+	accountId any, key string,
+	extra model.RefreshTokenExtraData) (err error) {
+	ext := cfg.RefreshTokenExpire
+	k := t.getUserRefreshTokenExtraDataKey(accountId, key)
+	data := gbase64.EncodeString(gconv.String(extra))
+	_, err = g.Redis().Set(ctx, k, data, gredis.SetOption{TTLOption: gredis.TTLOption{EX: &ext}})
+	return
+}
+
+func (t sToken) removeRefreshToken(ctx context.Context, accountId, key string) (err error) {
+	_, err = g.Redis().ZRem(ctx, t.getUserRefreshTokenKey(accountId), key)
+	if err != nil {
+		return
+	}
+	_, err = g.Redis().Unlink(ctx, t.getUserRefreshTokenExtraDataKey(accountId, key))
+	return
 }

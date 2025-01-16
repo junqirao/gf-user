@@ -32,4 +32,14 @@ type (
 		RefreshTokenKey string    `json:"refresh_token_key"`
 		AccessToken     string    `json:"access_token"`
 	}
+	RefreshTokenDetail struct {
+		Key        string            `json:"key"`
+		City       map[string]string `json:"city"`
+		Country    map[string]string `json:"country"`
+		CountryISO string            `json:"country_iso"`
+		IP         string            `json:"ip"`
+		UserAgent  string            `json:"user_agent"`
+		From       string            `json:"from"`
+		ExpireAt   int64             `json:"expire_at"`
+	}
 )

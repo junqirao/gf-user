@@ -18,6 +18,7 @@ type IAccountAccount interface {
 	ModifyName(ctx context.Context, req *account.ModifyNameReq) (res *account.ModifyNameRes, err error)
 	ModifyAvatar(ctx context.Context, req *account.ModifyAvatarReq) (res *account.ModifyAvatarRes, err error)
 	ModifyPassword(ctx context.Context, req *account.ModifyPasswordReq) (res *account.ModifyPasswordRes, err error)
+	GetTokenDetailList(ctx context.Context, req *account.GetTokenDetailListReq) (res *account.GetTokenDetailListRes, err error)
 }
 
 type IAccountLogin interface {
