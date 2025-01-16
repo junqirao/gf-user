@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/gogf/gf/v2/database/gredis"
@@ -33,7 +32,6 @@ func init() {
 
 type (
 	sToken struct {
-		mu sync.Locker
 	}
 	refreshToken struct {
 		Key      string
@@ -41,17 +39,17 @@ type (
 	}
 )
 
-func newSToken(ctx context.Context) *sToken {
-	mutex, err := kvdb.NewMutex(ctx, "user_token_handler")
-	if err != nil {
-		return nil
-	}
-	return &sToken{mu: mutex}
+func newSToken(_ context.Context) *sToken {
+	return &sToken{}
 }
 
 func (t sToken) GenerateAccessToken(ctx context.Context, user *model.UserAccount, extra model.RefreshTokenExtraData) (accessToken string, refreshToken string, err error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
+	mu, err := kvdb.NewMutex(ctx, fmt.Sprintf("user_token_handler_%v", user.Id))
+	if err != nil {
+		return
+	}
+	mu.Lock()
+	defer mu.Unlock()
 	cfg := service.Config().GetTokenConfig(ctx)
 
 	refreshTokenKey := grand.S(8)
