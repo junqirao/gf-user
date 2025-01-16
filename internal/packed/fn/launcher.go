@@ -11,6 +11,7 @@ import (
 
 	"gf-user/internal/consts"
 	"gf-user/internal/packed"
+	"gf-user/internal/packed/ipgeo"
 )
 
 func BeforeTasks() []*launcher.HookTask {
@@ -45,6 +46,10 @@ func BeforeTasks() []*launcher.HookTask {
 				g.Log().Info(ctx, "mfa config generate secret.")
 				return cfg
 			})
+		}),
+		launcher.NewHookTask("init_ipgeo_module", func(ctx context.Context) error {
+			ipgeo.Init(ctx)
+			return nil
 		}),
 	}
 }

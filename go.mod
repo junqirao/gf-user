@@ -8,6 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.8.3
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/junqirao/gocomponents v0.0.1-rc3.0.20250112070606-0e80e7142da3
+	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/satori/go.uuid v1.2.0
 )
 
@@ -42,6 +43,7 @@ require (
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v7 v7.0.82 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/oschwald/maxminddb-golang v1.13.0 // indirect
 	github.com/redis/go-redis/v9 v9.7.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rs/xid v1.6.0 // indirect
