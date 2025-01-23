@@ -48,6 +48,10 @@ const (
 
 // config
 const (
+	// system
+
+	ConfigKeySystemInitialized = "system_initialized"
+
 	// token
 
 	ConfigKeyToken     = "token"

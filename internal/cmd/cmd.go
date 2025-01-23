@@ -36,6 +36,8 @@ var (
 				group.Bind(
 					// login & register
 					account.NewLogin(),
+					// config public part
+					config.NewPublic(),
 				)
 				// biz
 				group.Group("", func(group *ghttp.RouterGroup) {

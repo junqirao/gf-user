@@ -7,8 +7,13 @@ package config
 import (
 	"context"
 
+	"gf-user/api/config/public"
 	"gf-user/api/config/v1"
 )
+
+type IConfigPublic interface {
+	GetSystemInitialized(ctx context.Context, req *public.GetSystemInitializedReq) (res *public.GetSystemInitializedRes, err error)
+}
 
 type IConfigV1 interface {
 	SetLoginConfig(ctx context.Context, req *v1.SetLoginConfigReq) (res *v1.SetLoginConfigRes, err error)

@@ -29,4 +29,7 @@ type (
 	LoginDisplayConfig struct {
 		Notice string `json:"notice"`
 	}
+	SystemInitializeFlag struct {
+		Initialized bool `json:"initialized"`
+	}
 )

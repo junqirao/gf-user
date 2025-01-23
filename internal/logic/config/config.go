@@ -11,6 +11,7 @@ import (
 	"github.com/junqirao/gocomponents/structs"
 
 	"gf-user/internal/consts"
+	"gf-user/internal/dao"
 	"gf-user/internal/model"
 	"gf-user/internal/service"
 )
@@ -83,6 +84,56 @@ func (s sConfig) Exist(ctx context.Context, key string) (exist bool, err error) 
 	case errors.Is(err, kvdb.ErrStorageNotFound):
 		err = nil
 	default:
+	}
+	return
+}
+
+func (s sConfig) SystemInitialized(ctx context.Context) (ok bool, err error) {
+	val, err := kvdb.Storages.GetStorage(stoName).Get(ctx, consts.ConfigKeySystemInitialized)
+	switch {
+	case errors.Is(err, kvdb.ErrStorageNotFound):
+		err = s.updateSystemInitialized(ctx)
+	case len(val) == 0:
+		err = s.updateSystemInitialized(ctx)
+	case err == nil:
+		get := func() (ok bool, err error) {
+			ptr := new(model.SystemInitializeFlag)
+			if err = val[0].Value.Struct(&ptr); err != nil {
+				return
+			}
+			ok = ptr.Initialized
+			return
+		}
+		ok, err = get()
+		if !ok {
+			if err = s.updateSystemInitialized(ctx); err != nil {
+				return
+			}
+			ok, err = get()
+		}
+		return
+	default:
+		return
+	}
+
+	ok = err == nil
+	return
+}
+
+func (s sConfig) updateSystemInitialized(ctx context.Context) (err error) {
+	mutex, err := kvdb.NewMutex(ctx, "get_system_status")
+	if err != nil {
+		return
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	accNum, err := dao.Account.Ctx(ctx).Count()
+	if err != nil {
+		return
+	}
+	if accNum > 0 {
+		err = s.set(ctx, stoName, consts.ConfigKeySystemInitialized, &model.SystemInitializeFlag{Initialized: true})
 	}
 	return
 }

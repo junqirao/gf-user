@@ -13,3 +13,9 @@ type ControllerV1 struct{}
 func NewV1() config.IConfigV1 {
 	return &ControllerV1{}
 }
+
+type ControllerPublic struct{}
+
+func NewPublic() config.IConfigPublic {
+	return &ControllerPublic{}
+}
