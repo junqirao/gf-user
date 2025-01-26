@@ -28,10 +28,13 @@ var (
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
 			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(response.MiddlewareWithDataHandler(func(ctx context.Context, res any) any {
-					tagParser.Parse(ctx, res)
-					return res
-				}))
+				group.Middleware(
+					ghttp.MiddlewareCORS,
+					response.MiddlewareWithDataHandler(func(ctx context.Context, res any) any {
+						tagParser.Parse(ctx, res)
+						return res
+					}),
+				)
 				// no need authentication
 				group.Bind(
 					// login & register
