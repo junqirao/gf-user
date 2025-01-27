@@ -40,6 +40,8 @@ func (t sToken) ListUserRefreshTokenDetails(ctx context.Context, locale string) 
 		return
 	}
 
+	ipgeoDB := ipgeo.DB()
+
 	for k, v := range res {
 		bs, err := gbase64.DecodeString(v.String())
 		if err != nil {
@@ -61,10 +63,13 @@ func (t sToken) ListUserRefreshTokenDetails(ctx context.Context, locale string) 
 		}
 		if detail.IP != "" {
 			if gipv4.IsIntranet(detail.IP) {
-				detail.City = "Local"
-				detail.Country = "Server"
+				detail.City = "-"
+				detail.Country = "-"
+			} else if ipgeoDB == nil {
+				detail.City = "Unknown"
+				detail.Country = "Unknown"
 			} else {
-				city, err := ipgeo.DB().City(net.ParseIP(detail.IP))
+				city, err := ipgeoDB.City(net.ParseIP(detail.IP))
 				if err != nil {
 					g.Log().Warningf(ctx, "ipgeo get [ip:%s] city failed: %v", detail.IP, err)
 					continue

@@ -17,6 +17,10 @@ func Init(ctx context.Context) {
 		g.Log().Infof(ctx, "ipgeo database config error: %s", err.Error())
 		return
 	}
+	if v.IsEmpty() {
+		g.Log().Infof(ctx, "ipgeo database config is empty, skip init.")
+		return
+	}
 	db, err = geoip2.Open(v.String())
 	if err != nil {
 		g.Log().Errorf(ctx, "open ipgeo database failed: %v", err)
