@@ -81,8 +81,10 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 		HasMFA:    len(account.Mfa) > 0,
 	}
 	if len(sp) > 0 {
-		ua.SpaceInfo = sp[0]
-		for _, space := range sp {
+		for i, space := range sp {
+			if gconv.Int64(space.Id) == gconv.Int64(user.Space) {
+				ua.SpaceInfo = sp[i]
+			}
 			ua.Spaces = append(ua.Spaces, space.Id)
 		}
 	}

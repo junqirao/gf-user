@@ -196,6 +196,10 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 		return
 	}
 
+	if spaceId <= 0 {
+		spaceId = consts.DefaultSpaceId
+	}
+
 	account, err := s.IsValid(ctx, claims.Audience[0])
 	if err != nil {
 		return
