@@ -81,7 +81,10 @@ func (s sAccount) Register(ctx context.Context, in *model.AccountRegisterInput) 
 	if err != nil {
 		return
 	}
-	out, err = s.getUserAccount(ctx, usr, account)
+	if out, err = s.getUserAccount(ctx, usr, account); err != nil {
+		return
+	}
+	s.setAvatar(ctx, out)
 	return
 }
 
@@ -145,6 +148,10 @@ func (s sAccount) UserLogin(ctx context.Context, in *model.AccountLoginInput) (o
 		ext.From = in.From
 	}
 	out.AccessToken, out.RefreshToken, err = service.Token().GenerateAccessToken(ctx, out.UserAccount, ext)
+	if err != nil {
+		return
+	}
+	s.setAvatar(ctx, out.UserAccount, out.AccessToken)
 	return
 }
 
@@ -206,6 +213,9 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 	if err != nil {
 		return
 	}
+
+	s.setAvatar(ctx, ua, newAccessToken)
+
 	res = &model.UserAccountLoginInfo{
 		UserAccount:  ua,
 		AccessToken:  newAccessToken,
@@ -228,7 +238,10 @@ func (s sAccount) GetUserAccount(ctx context.Context, spaceId ...int64) (ua *mod
 	if err != nil {
 		return
 	}
-	ua, err = s.getUserAccount(ctx, usr, account)
+	if ua, err = s.getUserAccount(ctx, usr, account); err != nil {
+		return
+	}
+	s.setAvatar(ctx, ua)
 	return
 }
 
@@ -252,14 +265,28 @@ func (s sAccount) GetAccount(ctx context.Context, account string) (acc *do.Accou
 }
 
 func (s sAccount) getUserAccount(ctx context.Context, usr *do.User, account *do.Account) (ua *model.UserAccount, err error) {
-	space, err := service.Space().GetSpaceInfo(ctx, gconv.Int64(usr.Space))
+	spaces, err := service.Space().GetSpaceList(ctx, gconv.String(account.Id))
 	if err != nil {
 		return
 	}
-	ua = model.NewUserAccount(account, usr, space)
+	ua = model.NewUserAccount(account, usr, spaces...)
+	return
+}
+
+func (s sAccount) setAvatar(ctx context.Context, ua *model.UserAccount, token ...string) {
+	accessToken := ""
+	if len(token) > 0 && token[0] != "" {
+		accessToken = token[0]
+	} else {
+		t := service.Token().GetTokenInfoFromCtx(ctx)
+		accessToken = t.AccessToken
+	}
 	if key := gconv.String(ua.Avatar); key != "" {
 		// using internal redirect instead of sign storage url directly
-		ua.Avatar = fmt.Sprintf("/v1/storage/account/avatar?key=%s", key)
+		ua.Avatar = fmt.Sprintf("/v1/storage/account/avatar?key=%s&access_token=%s", key, accessToken)
 	}
-	return
+	if ua.SpaceInfo != nil && ua.SpaceInfo.LogoKey != "" {
+		// using internal redirect instead of sign storage url directly
+		ua.SpaceInfo.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s&access_token=%s", ua.SpaceInfo.LogoKey, accessToken)
+	}
 }

@@ -34,6 +34,7 @@ type (
 		SpaceInfo *Space      `json:"space_info"`
 		Extra     interface{} `json:"extra"`
 		HasMFA    bool        `json:"has_mfa"`
+		Spaces    []int64     `json:"spaces"`
 	}
 
 	AccountLoginInput struct {
@@ -81,6 +82,9 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 	}
 	if len(sp) > 0 {
 		ua.SpaceInfo = sp[0]
+		for _, space := range sp {
+			ua.Spaces = append(ua.Spaces, space.Id)
+		}
 	}
 	return ua
 }
