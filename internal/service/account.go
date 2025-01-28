@@ -20,6 +20,7 @@ type (
 		RefreshToken(ctx context.Context, spaceId int64, refreshToken string) (res *model.UserAccountLoginInfo, err error)
 		GetUserAccount(ctx context.Context, spaceId ...int64) (ua *model.UserAccount, err error)
 		GetAccount(ctx context.Context, account string) (acc *do.Account, err error)
+		Exists(ctx context.Context, account string) (exists bool, err error)
 		GenerateMFAQRCode(ctx context.Context) (qrCode string, err error)
 		BindMFA(ctx context.Context, mfaCode string) (err error)
 		VerifyMFACode(ctx context.Context, account *do.Account, mfaCode string) (err error)

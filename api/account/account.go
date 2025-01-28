@@ -22,6 +22,7 @@ type IAccountAccount interface {
 }
 
 type IAccountLogin interface {
+	CheckExists(ctx context.Context, req *login.CheckExistsReq) (res *login.CheckExistsRes, err error)
 	UserLogin(ctx context.Context, req *login.UserLoginReq) (res *login.UserLoginRes, err error)
 	GetLoginConfig(ctx context.Context, req *login.GetLoginConfigReq) (res *login.GetLoginConfigRes, err error)
 	UserLogout(ctx context.Context, req *login.UserLogoutReq) (res *login.UserLogoutRes, err error)

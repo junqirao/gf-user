@@ -294,3 +294,12 @@ func (s sAccount) setAvatar(ctx context.Context, ua *model.UserAccount, token ..
 		ua.SpaceInfo.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s&access_token=%s", ua.SpaceInfo.LogoKey, accessToken)
 	}
 }
+
+func (s sAccount) Exists(ctx context.Context, account string) (exists bool, err error) {
+	count, err := dao.Account.Ctx(ctx).Where(dao.Account.Columns().Account, account).Count()
+	if err != nil {
+		return
+	}
+	exists = count > 0
+	return
+}
