@@ -148,7 +148,7 @@ func (s sConfig) updateSystemInitialized(ctx context.Context) (err error) {
 		acc = append(acc, gconv.String(user.Account))
 	}
 	var accounts []*do.Account
-	err = dao.Account.Ctx(ctx).WhereIn(dao.Account.Columns().Account, acc).Scan(&accounts)
+	err = dao.Account.Ctx(ctx).WhereIn(dao.Account.Columns().Id, acc).Scan(&accounts)
 	if err != nil {
 		return
 	}
