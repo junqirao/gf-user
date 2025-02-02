@@ -58,14 +58,12 @@ const (
 
 	// token
 
-	ConfigKeyToken     = "token"
-	ConfigStoNameToken = "token_config"
+	ConfigKeyToken = "token"
 
 	// mfa
 
-	ConfigKeyMfa     = "mfa"
-	ConfigStoNameMfa = "mfa_config"
-	ConfigKeyLogin   = "login"
+	ConfigKeyMfa   = "mfa"
+	ConfigKeyLogin = "login"
 )
 
 type LoginMode int8
