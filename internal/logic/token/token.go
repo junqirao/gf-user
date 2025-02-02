@@ -185,7 +185,7 @@ func (t sToken) ParseRefreshToken(ctx context.Context, refreshToken string) (cla
 }
 
 func (t sToken) removeInvalidRefreshTokens(ctx context.Context, key string, rts []*refreshToken) (err error) {
-	// 移除超时
+	// remove expired
 	now := time.Now().Unix()
 	var expCount int64 = 0
 	for _, rt := range rts {
@@ -202,7 +202,7 @@ func (t sToken) removeInvalidRefreshTokens(ctx context.Context, key string, rts 
 		}
 	}
 	cfg := service.Config().GetTokenConfig(ctx)
-	// 移除超限
+	// remove over limits
 	if cfg.RefreshTokenLimit <= 0 {
 		return
 	}

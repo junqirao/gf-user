@@ -22,7 +22,8 @@ var (
 
 // token
 var (
-	ErrInvalidToken = response.NewCode(1200, "invalid token", http.StatusUnauthorized)
+	ErrInvalidToken  = response.NewCode(1200, "invalid token", http.StatusUnauthorized)
+	ErrTokenRequired = response.NewCode(1201, "token required", http.StatusBadRequest)
 )
 
 // space

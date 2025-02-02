@@ -7,6 +7,7 @@ import (
 	"github.com/junqirao/gocomponents/response"
 
 	"gf-user/internal/consts"
+	"gf-user/internal/model/code"
 	"gf-user/internal/service"
 )
 
@@ -16,7 +17,7 @@ func AuthToken(r *ghttp.Request) {
 		token = r.Get("access_token").String()
 	}
 	if token == "" {
-		response.Error(r, response.CodeInvalidParameter.WithDetail("Authorization is required"))
+		response.Error(r, code.ErrTokenRequired)
 		return
 	}
 	info, err := service.Token().ValidAccessToken(r.Context(), strings.TrimPrefix(token, "Bearer "))
