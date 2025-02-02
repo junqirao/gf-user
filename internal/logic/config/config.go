@@ -13,6 +13,7 @@ import (
 	"gf-user/internal/consts"
 	"gf-user/internal/dao"
 	"gf-user/internal/model"
+	"gf-user/internal/model/do"
 	"gf-user/internal/service"
 )
 
@@ -128,12 +129,35 @@ func (s sConfig) updateSystemInitialized(ctx context.Context) (err error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	accNum, err := dao.Account.Ctx(ctx).Count()
+	var users []*do.User
+	err = dao.User.Ctx(ctx).
+		Where(g.Map{
+			dao.User.Columns().Space: consts.DefaultSpaceId,
+			dao.User.Columns().Type:  consts.UserTypeManager,
+		}).
+		Scan(&users)
 	if err != nil {
 		return
 	}
-	if accNum > 0 {
-		err = s.set(ctx, stoName, consts.ConfigKeySystemInitialized, &model.SystemInitializeFlag{Initialized: true})
+	if len(users) == 0 {
+		err = s.set(ctx, stoName, consts.ConfigKeySystemInitialized, &model.SystemInitializeFlag{Initialized: false})
+		return
+	}
+	var acc []string
+	for _, user := range users {
+		acc = append(acc, gconv.String(user.Account))
+	}
+	var accounts []*do.Account
+	err = dao.Account.Ctx(ctx).WhereIn(dao.Account.Columns().Account, acc).Scan(&accounts)
+	if err != nil {
+		return
+	}
+	cod := g.Cfg().MustGet(ctx, "admin.code").String()
+	for _, account := range accounts {
+		if cod == gconv.MapStrStr(account.Extra)[consts.AccountExtraKeyAdminCode] {
+			err = s.set(ctx, stoName, consts.ConfigKeySystemInitialized, &model.SystemInitializeFlag{Initialized: true})
+			return
+		}
 	}
 	return
 }

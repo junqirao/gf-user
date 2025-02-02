@@ -60,10 +60,14 @@ func (s sAccount) Register(ctx context.Context, in *model.AccountRegisterInput) 
 		if err != nil {
 			return
 		}
+		typ := consts.UserTypeNormal
+		if in.Administrator {
+			typ = consts.UserTypeManager
+		}
 		_, err = dao.User.Ctx(ctx).Insert(entity.User{
 			Account:   ea.Id,
 			Space:     consts.DefaultSpaceId,
-			Type:      consts.UserTypeNormal,
+			Type:      typ,
 			Name:      in.Name,
 			CreatedAt: now,
 		})
@@ -256,6 +260,25 @@ func (s sAccount) GetAccount(ctx context.Context, account string) (acc *do.Accou
 	}
 	if v.IsEmpty() {
 		err = code.ErrAccountNotExist.WithDetail(account)
+		return
+	}
+	acc = new(do.Account)
+	if err = v.Struct(acc); err != nil {
+		return
+	}
+	if gconv.Int(acc.Status) != consts.AccountStatusNormal {
+		err = code.ErrAccountLocked
+	}
+	return
+}
+
+func (s sAccount) GetAccountById(ctx context.Context, id string) (acc *do.Account, err error) {
+	v, err := dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, id).One()
+	if err != nil {
+		return
+	}
+	if v.IsEmpty() {
+		err = code.ErrAccountNotExist.WithDetail(id)
 		return
 	}
 	acc = new(do.Account)

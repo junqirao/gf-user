@@ -15,5 +15,13 @@ type (
 		Email    string `json:"email"`
 		Avatar   string `json:"avatar"`
 	}
-	RegisterRes model.UserAccount
+	RegisterRes                   model.UserAccount
+	RegisterSuperAdministratorReq struct {
+		g.Meta   `path:"/v1/account/user/register/super-admin" tags:"User" method:"post" summary:"User register super administrator"`
+		Account  string `json:"account"`
+		Password string `json:"password"`
+		Code     string `json:"code"`
+		Nonce    string `json:"nonce"`
+	}
+	RegisterSuperAdministratorRes model.UserAccount
 )

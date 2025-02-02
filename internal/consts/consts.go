@@ -11,6 +11,10 @@ const (
 
 	AccountTypeNormal = 0
 	AccountTypeApp    = 1
+
+	// extra key
+
+	AccountExtraKeyAdminCode = "admin_code"
 )
 
 // user

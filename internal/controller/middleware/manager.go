@@ -4,13 +4,12 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/junqirao/gocomponents/response"
 
-	"gf-user/internal/consts"
 	"gf-user/internal/service"
 )
 
-// MustSuperAdmin space_id = 1 && is manager
+// MustSuperAdmin space_id = 1 && is manager && code matches
 func MustSuperAdmin(r *ghttp.Request) {
-	ok, err := service.User().IsSpaceManager(r.Context())
+	ok, err := service.User().IsSuperAdmin(r.Context())
 	if err != nil {
 		response.Error(r, err)
 		return
@@ -20,10 +19,5 @@ func MustSuperAdmin(r *ghttp.Request) {
 		return
 	}
 
-	info := service.Token().GetTokenInfoFromCtx(r.Context())
-	if info.SpaceId != consts.DefaultSpaceId {
-		response.Error(r, response.CodePermissionDeny.WithDetail("invalid space"))
-		return
-	}
 	r.Middleware.Next()
 }

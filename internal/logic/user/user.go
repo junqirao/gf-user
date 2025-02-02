@@ -3,8 +3,10 @@ package user
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/junqirao/gocomponents/response"
 
 	"gf-user/internal/consts"
 	"gf-user/internal/dao"
@@ -83,5 +85,31 @@ func (u sUser) IsSpaceManager(ctx context.Context) (ok bool, err error) {
 		return
 	}
 	ok = space.IsOwner
+	return
+}
+
+func (u sUser) IsSuperAdmin(ctx context.Context) (ok bool, err error) {
+	manager, err := u.IsSpaceManager(ctx)
+	if err != nil {
+		return
+	}
+	if !manager {
+		return
+	}
+	tokenInfo := service.Token().GetTokenInfoFromCtx(ctx)
+	if tokenInfo.SpaceId != consts.DefaultSpaceId {
+		err = response.CodePermissionDeny.WithDetail("invalid space")
+		return
+	}
+	account, err := service.Account().GetAccountById(ctx, tokenInfo.AccountId)
+	if err != nil {
+		return
+	}
+	cod := g.Cfg().MustGet(ctx, "admin.code").String()
+	if cod == "" || cod != gconv.MapStrStr(account.Extra)[consts.AccountExtraKeyAdminCode] {
+		err = response.CodePermissionDeny.WithDetail("invalid admin code")
+		return
+	}
+	ok = true
 	return
 }

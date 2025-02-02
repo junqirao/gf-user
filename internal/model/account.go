@@ -4,19 +4,21 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 
+	"gf-user/internal/consts"
 	"gf-user/internal/model/do"
 )
 
 type (
 	AccountRegisterInput struct {
-		Account  string         `json:"account"`
-		Password string         `json:"password"`
-		Type     int            `json:"type"`
-		Status   int            `json:"status"`
-		Name     string         `json:"name"`
-		Email    string         `json:"email"`
-		Avatar   string         `json:"avatar"`
-		Extra    map[string]any `json:"extra"`
+		Account       string         `json:"account"`
+		Password      string         `json:"password"`
+		Type          int            `json:"type"`
+		Status        int            `json:"status"`
+		Name          string         `json:"name"`
+		Email         string         `json:"email"`
+		Avatar        string         `json:"avatar"`
+		Extra         map[string]any `json:"extra"`
+		Administrator bool           `json:"-"`
 	}
 	UserAccount struct {
 		Id        interface{} `json:"id"`                              // account uuid
@@ -77,7 +79,6 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 		},
 		CreatedAt: account.CreatedAt,
 		UpdateAt:  account.UpdateAt,
-		Extra:     gconv.Map(account.Extra),
 		HasMFA:    len(account.Mfa) > 0,
 	}
 	if len(sp) > 0 {
@@ -88,5 +89,8 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 			ua.Spaces = append(ua.Spaces, space.Id)
 		}
 	}
+	extra := gconv.Map(account.Extra)
+	delete(extra, consts.AccountExtraKeyAdminCode)
+	ua.Extra = extra
 	return ua
 }
