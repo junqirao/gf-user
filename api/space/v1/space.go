@@ -37,4 +37,11 @@ type (
 		Source []*model.SpaceInvitation `json:"source"`
 		Target []*model.SpaceInvitation `json:"target"`
 	}
+	GetAccountSpacesReq struct {
+		g.Meta `path:"/v1/space/list/my" tags:"User" method:"get" summary:"User space list"`
+		model.AuthorizationRequired
+	}
+	GetAccountSpacesRes struct {
+		List []*model.Space `json:"list"`
+	}
 )

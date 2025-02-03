@@ -19,7 +19,11 @@ type (
 	GetLoginConfigReq struct {
 		g.Meta `path:"/v1/account/login/config" tags:"User" method:"get" summary:"get login config"`
 	}
-	GetLoginConfigRes model.LoginConfig
+	GetLoginConfigRes struct {
+		model.LoginConfig
+		MFAEnabled    bool `json:"mfa_enabled"`
+		MFACodeLength int  `json:"mfa_code_length"`
+	}
 
 	UserLogoutReq struct {
 		g.Meta       `path:"/v1/account/user/logout" tags:"User" method:"post" summary:"User logout"`

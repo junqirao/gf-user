@@ -158,7 +158,7 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 		}
 	}
 
-	err = code.ErrInvalidToken.WithDetail("refresh token not found")
+	err = code.ErrRefreshTokenNotFound
 	return
 }
 

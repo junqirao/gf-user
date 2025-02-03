@@ -33,4 +33,5 @@ type IAccountLogin interface {
 
 type IAccountUser interface {
 	GetInfo(ctx context.Context, req *user.GetInfoReq) (res *user.GetInfoRes, err error)
+	ModifyUserName(ctx context.Context, req *user.ModifyUserNameReq) (res *user.ModifyUserNameRes, err error)
 }

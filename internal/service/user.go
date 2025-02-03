@@ -18,6 +18,7 @@ type (
 		CreateSpaceUser(ctx context.Context, account *do.Account, spaceId int64) (usr *do.User, err error)
 		IsSpaceManager(ctx context.Context) (ok bool, err error)
 		IsSuperAdmin(ctx context.Context) (ok bool, err error)
+		ModifyUserName(ctx context.Context, name string) (err error)
 	}
 )
 
