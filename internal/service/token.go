@@ -20,6 +20,7 @@ type (
 		RemoveRefreshToken(ctx context.Context, accountId string, claims *model.RefreshTokenClaims) (err error)
 		ParseRefreshToken(ctx context.Context, refreshToken string) (claims *model.RefreshTokenClaims, err error)
 		ListUserRefreshTokenDetails(ctx context.Context, locale string) (dts []*model.RefreshTokenDetail, err error)
+		ClearRefreshTokens(ctx context.Context) (cnt int64, err error)
 	}
 )
 

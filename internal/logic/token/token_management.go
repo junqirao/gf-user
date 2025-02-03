@@ -98,3 +98,17 @@ func (t sToken) ListUserRefreshTokenDetails(ctx context.Context, locale string) 
 	})
 	return
 }
+
+func (t sToken) ClearRefreshTokens(ctx context.Context) (cnt int64, err error) {
+	tokenInfo := t.GetTokenInfoFromCtx(ctx)
+	rts, err := t.getUserRefreshTokens(ctx, t.getUserRefreshTokenKey(tokenInfo.AccountId))
+	if err != nil {
+		return
+	}
+	var keys []string
+	for _, rt := range rts {
+		keys = append(keys, t.getUserRefreshTokenExtraDataKey(tokenInfo.AccountId, rt.Key))
+	}
+	keys = append(keys, t.getUserRefreshTokenKey(tokenInfo.AccountId))
+	return g.Redis().Unlink(ctx, keys...)
+}

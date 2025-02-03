@@ -21,4 +21,13 @@ type (
 		Code string `json:"code"`
 	}
 	BindMFARes struct{}
+
+	UnBindMFAReq struct {
+		g.Meta `path:"/v1/account/mfa/unbind" tags:"User" method:"post" summary:"User unbind mfa"`
+		model.AuthorizationRequired
+		Password string `json:"password"`
+		Nonce    string `json:"nonce"`
+		Code     string `json:"code"`
+	}
+	UnBindMFARes struct{}
 )

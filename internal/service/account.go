@@ -26,6 +26,7 @@ type (
 		GenerateMFAQRCode(ctx context.Context) (qrCode string, err error)
 		BindMFA(ctx context.Context, mfaCode string) (err error)
 		VerifyMFACode(ctx context.Context, account *do.Account, mfaCode string) (err error)
+		UnbindMFA(ctx context.Context, pwd string, nonce string, cod string) (err error)
 		ModifyName(ctx context.Context, name string) (err error)
 		ModifyAvatar(ctx context.Context, avatar string) (err error)
 		ModifyPassword(ctx context.Context, in *model.AccountModifyPasswordInput) (err error)

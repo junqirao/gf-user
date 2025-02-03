@@ -15,7 +15,8 @@ type (
 	SpaceLogoReq struct {
 		g.Meta `path:"/v1/storage/space/logo" tags:"Storage" method:"get" summary:"redirect get space logo"`
 		// model.AuthenticationRequired
-		Key string `json:"key"`
+		Key     string `json:"key"`
+		SpaceId int64  `json:"space_id"`
 	}
 	SpaceLogoRes struct {
 	}

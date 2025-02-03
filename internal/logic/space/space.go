@@ -84,7 +84,7 @@ func (s sSpace) convert2SpaceInfo(ctx context.Context, v *do.Space) *model.Space
 	}
 	if space.LogoKey != "" {
 		token := service.Token().GetTokenInfoFromCtx(ctx)
-		space.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s&access_token=%s", space.LogoKey, token.AccessToken)
+		space.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s&space_id=%v&access_token=%s", space.LogoKey, space.Id, token.AccessToken)
 	}
 	return space
 }

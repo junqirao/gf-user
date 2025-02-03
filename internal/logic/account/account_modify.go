@@ -55,5 +55,10 @@ func (s sAccount) ModifyPassword(ctx context.Context, in *model.AccountModifyPas
 	_, err = dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, acc.Id).Update(g.Map{
 		dao.Account.Columns().Password: in.New,
 	})
+	if err != nil {
+		return
+	}
+	// clear tokens
+	_, err = service.Token().ClearRefreshTokens(ctx)
 	return
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/v2/crypto/gaes"
+	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/junqirao/gocomponents/mfa"
 
@@ -101,5 +102,26 @@ func (s sAccount) setMfaBindCache(ctx context.Context, accountId any, secret str
 		return
 	}
 	_, err = g.Redis().Expire(ctx, key, 300)
+	return
+}
+
+func (s sAccount) UnbindMFA(ctx context.Context, pwd, nonce, cod string) (err error) {
+	token := service.Token().GetTokenInfoFromCtx(ctx)
+	account, err := s.IsValid(ctx, token.AccountId)
+	if err != nil {
+		return
+	}
+	if err = s.VerifyMFACode(ctx, account, cod); err != nil {
+		return
+	}
+
+	if pwd != gmd5.MustEncrypt(fmt.Sprintf("%v%s", account.Password, nonce)) {
+		err = code.ErrAccountPassword
+		return
+	}
+
+	_, err = dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, account.Id).Data(g.Map{
+		dao.Account.Columns().Mfa: nil,
+	}).Update()
 	return
 }
