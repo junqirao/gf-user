@@ -63,6 +63,10 @@ var (
 						config.NewV1(),
 					)
 				})
+				// ping
+				group.ALL("/system/ping", func(r *ghttp.Request) {
+					response.Success(r)
+				})
 			})
 			// redirect
 			s.Group("", func(group *ghttp.RouterGroup) {
