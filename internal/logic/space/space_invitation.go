@@ -112,11 +112,49 @@ func (s sSpace) MyInvitations(ctx context.Context) (target, source []*model.Spac
 		return
 	}
 	target, source = make([]*model.SpaceInvitation, 0), make([]*model.SpaceInvitation, 0)
+
+	var (
+		accountIdsMap = make(map[any]struct{})
+		accountIds    []string
+		accountMap    = make(map[string]*model.Account)
+		spaceIdsMap   = make(map[any]struct{})
+		spaceIds      []int64
+		spaceMap      = make(map[int64]*model.Space)
+	)
+	for _, v := range list {
+		accountIdsMap[v.Target] = struct{}{}
+		accountIdsMap[v.From] = struct{}{}
+		spaceIdsMap[v.Space] = struct{}{}
+	}
+	for id, _ := range accountIdsMap {
+		accountIds = append(accountIds, gconv.String(id))
+	}
+	for id, _ := range spaceIdsMap {
+		spaceIds = append(spaceIds, gconv.Int64(id))
+	}
+
+	accounts, err := service.Account().GetAccountByIds(ctx, accountIds)
+	if err != nil {
+		return
+	}
+	for _, account := range accounts {
+		accountMap[gconv.String(account.Id)] = account
+	}
+
+	spaces, err := s.GetSpaceListByIds(ctx, spaceIds)
+	if err != nil {
+		return
+	}
+	for _, space := range spaces {
+		spaceMap[gconv.Int64(space.Id)] = space
+	}
+
 	for _, v := range list {
 		inv := &model.SpaceInvitation{
 			Id:        v.Id,
-			Space:     v.Space,
-			From:      v.From,
+			Space:     spaceMap[gconv.Int64(v.Space)],
+			From:      accountMap[gconv.String(v.From)].AccountBrief,
+			To:        accountMap[gconv.String(v.Target)].AccountBrief,
 			Status:    v.Status,
 			Comment:   v.Comment,
 			CreatedAt: v.CreatedAt,

@@ -8,7 +8,8 @@ type (
 	AccountAvatarReq struct {
 		g.Meta `path:"/v1/storage/account/avatar" tags:"Storage" method:"get" summary:"redirect get account avatar"`
 		// model.AuthenticationRequired
-		Key string `json:"key"`
+		Key       string `json:"key"`
+		AccountId string `json:"account_id"`
 	}
 	AccountAvatarRes struct {
 	}

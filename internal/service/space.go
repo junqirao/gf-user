@@ -14,6 +14,7 @@ type (
 	ISpace interface {
 		GetSpaceInfo(ctx context.Context, spaceId int64) (space *model.Space, err error)
 		GetSpaceList(ctx context.Context, accountId string) (spaceList []*model.Space, err error)
+		GetSpaceListByIds(ctx context.Context, ids []int64) (spaceList []*model.Space, err error)
 		CreateSpace(ctx context.Context, in model.CreateSpaceInput) (space *model.Space, err error)
 		CreateInvitation(ctx context.Context, in model.CreateSpaceInvitationInput) (err error)
 		HandleInvitation(ctx context.Context, id int, op int) (err error)

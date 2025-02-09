@@ -56,6 +56,10 @@ func (s sSpace) GetSpaceList(ctx context.Context, accountId string) (spaceList [
 		return
 	}
 
+	return s.GetSpaceListByIds(ctx, ids)
+}
+
+func (s sSpace) GetSpaceListByIds(ctx context.Context, ids []int64) (spaceList []*model.Space, err error) {
 	sps := make([]*do.Space, 0)
 	if err = dao.Space.Ctx(ctx).WhereIn(dao.Space.Columns().Id, ids).Scan(&sps); err != nil {
 		return

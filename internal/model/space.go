@@ -17,12 +17,13 @@ type Space struct {
 }
 
 type SpaceInvitation struct {
-	Id        any         `json:"id"`
-	Space     any         `json:"space"`
-	From      any         `json:"from"`
-	Status    any         `json:"status"`
-	Comment   any         `json:"comment"`
-	CreatedAt *gtime.Time `json:"created_at"`
+	Id        any           `json:"id"`
+	Space     any           `json:"space"`
+	From      *AccountBrief `json:"from"`
+	To        *AccountBrief `json:"to"`
+	Status    any           `json:"status"`
+	Comment   any           `json:"comment"`
+	CreatedAt *gtime.Time   `json:"created_at"`
 }
 
 type CreateSpaceInput struct {

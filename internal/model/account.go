@@ -20,23 +20,29 @@ type (
 		Extra         map[string]any `json:"extra"`
 		Administrator bool           `json:"-"`
 	}
-	UserAccount struct {
-		Id        interface{} `json:"id"`                              // account uuid
-		Account   interface{} `json:"account"`                         // unique account
-		Password  interface{} `json:"password,omitempty"`              // password hash
-		Type      interface{} `json:"type" mapping:"account_type"`     // 0: normal, 1: app
-		Status    interface{} `json:"status" mapping:"account_status"` // 0: normal, 1: frozen
+	AccountBrief struct {
+		Id        interface{} `json:"id"` // account uuid
 		Name      interface{} `json:"name"`
-		Email     interface{} `json:"email"`
 		Avatar    interface{} `json:"avatar"`
 		AvatarKey interface{} `json:"avatar_key"`
+	}
+	Account struct {
+		*AccountBrief
+		Account   interface{} `json:"account"`            // unique account
+		Password  interface{} `json:"password,omitempty"` // password hash
+		Type      interface{} `json:"type"`               // 0: normal, 1: app
+		Status    interface{} `json:"status"`             // 0: normal, 1: frozen
+		Email     interface{} `json:"email"`
 		CreatedAt *gtime.Time `json:"created_at"`
 		UpdateAt  *gtime.Time `json:"update_at"`
-		UserInfo  *UserInfo   `json:"user_info"`
-		SpaceInfo *Space      `json:"space_info"`
-		Extra     interface{} `json:"extra"`
 		HasMFA    bool        `json:"has_mfa"`
-		Spaces    []int64     `json:"spaces"`
+		Extra     interface{} `json:"extra"`
+	}
+	UserAccount struct {
+		*Account
+		UserInfo  *UserInfo `json:"user_info"`
+		SpaceInfo *Space    `json:"space_info"`
+		Spaces    []int64   `json:"spaces"`
 	}
 
 	AccountLoginInput struct {
@@ -60,16 +66,31 @@ type (
 	}
 )
 
-func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccount {
-	ua := &UserAccount{
+func NewAccountBrief(account *do.Account) *AccountBrief {
+	return &AccountBrief{
 		Id:        account.Id,
-		Account:   account.Account,
-		Type:      account.Type,
-		Status:    account.Status,
 		Name:      account.Name,
-		Email:     account.Email,
 		Avatar:    account.Avatar,
 		AvatarKey: account.Avatar,
+	}
+}
+
+func NewAccount(account *do.Account) *Account {
+	return &Account{
+		AccountBrief: NewAccountBrief(account),
+		Account:      account.Account,
+		Type:         account.Type,
+		Status:       account.Status,
+		Email:        account.Email,
+		CreatedAt:    account.CreatedAt,
+		UpdateAt:     account.UpdateAt,
+		HasMFA:       len(account.Mfa) > 0,
+	}
+}
+
+func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccount {
+	ua := &UserAccount{
+		Account: NewAccount(account),
 		UserInfo: &UserInfo{
 			Id:     user.Id,
 			Space:  user.Space,
@@ -77,9 +98,6 @@ func NewUserAccount(account *do.Account, user *do.User, sp ...*Space) *UserAccou
 			Name:   user.Name,
 			JoinAt: user.CreatedAt,
 		},
-		CreatedAt: account.CreatedAt,
-		UpdateAt:  account.UpdateAt,
-		HasMFA:    len(account.Mfa) > 0,
 	}
 	if len(sp) > 0 {
 		for i, space := range sp {

@@ -12,7 +12,11 @@ import (
 func (c *ControllerRedirect) AccountAvatar(ctx context.Context, req *redirect.AccountAvatarReq) (res *redirect.AccountAvatarRes, err error) {
 	r := ghttp.RequestFromCtx(ctx)
 	token := service.Token().GetTokenInfoFromCtx(ctx)
-	url, err := service.Storage().SignAvatarImageGetUrl(ctx, token.AccountId, req.Key)
+	account := req.AccountId
+	if req.AccountId != "" {
+		account = token.AccountId
+	}
+	url, err := service.Storage().SignAvatarImageGetUrl(ctx, account, req.Key)
 	if err != nil {
 		return
 	}

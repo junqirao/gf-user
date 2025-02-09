@@ -3,6 +3,7 @@ package account
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/gogf/gf/v2/crypto/gmd5"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -88,7 +89,7 @@ func (s sAccount) Register(ctx context.Context, in *model.AccountRegisterInput) 
 	if out, err = s.getUserAccount(ctx, usr, account); err != nil {
 		return
 	}
-	s.setAvatar(ctx, out)
+	s.setAvatar(ctx, out.Account)
 	return
 }
 
@@ -155,7 +156,7 @@ func (s sAccount) UserLogin(ctx context.Context, in *model.AccountLoginInput) (o
 	if err != nil {
 		return
 	}
-	s.setAvatar(ctx, out.UserAccount, out.AccessToken)
+	s.setAvatar(ctx, out.UserAccount.Account, out.AccessToken)
 	return
 }
 
@@ -222,7 +223,7 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 		return
 	}
 
-	s.setAvatar(ctx, ua, newAccessToken)
+	s.setAvatar(ctx, ua.Account, newAccessToken)
 
 	res = &model.UserAccountLoginInfo{
 		UserAccount:  ua,
@@ -249,7 +250,7 @@ func (s sAccount) GetUserAccount(ctx context.Context, spaceId ...int64) (ua *mod
 	if ua, err = s.getUserAccount(ctx, usr, account); err != nil {
 		return
 	}
-	s.setAvatar(ctx, ua)
+	s.setAvatar(ctx, ua.Account)
 	return
 }
 
@@ -272,21 +273,29 @@ func (s sAccount) GetAccount(ctx context.Context, account string) (acc *do.Accou
 	return
 }
 
-func (s sAccount) GetAccountById(ctx context.Context, id string) (acc *do.Account, err error) {
-	v, err := dao.Account.Ctx(ctx).Where(dao.Account.Columns().Id, id).One()
+func (s sAccount) GetAccountById(ctx context.Context, id string) (acc *model.Account, err error) {
+	v, err := s.IsValid(ctx, id)
 	if err != nil {
 		return
 	}
-	if v.IsEmpty() {
-		err = code.ErrAccountNotExist.WithDetail(id)
+	acc = model.NewAccount(v)
+	s.setAvatar(ctx, acc)
+	return
+}
+
+func (s sAccount) GetAccountByIds(ctx context.Context, id []string) (acs []*model.Account, err error) {
+	accounts, err := dao.Account.Ctx(ctx).WhereIn(dao.Account.Columns().Id, id).All()
+	if err != nil {
 		return
 	}
-	acc = new(do.Account)
-	if err = v.Struct(acc); err != nil {
-		return
-	}
-	if gconv.Int(acc.Status) != consts.AccountStatusNormal {
-		err = code.ErrAccountLocked
+	for _, v := range accounts {
+		acc := new(do.Account)
+		if err = v.Struct(&acc); err != nil {
+			return
+		}
+		account := model.NewAccount(acc)
+		s.setAvatar(ctx, account)
+		acs = append(acs, account)
 	}
 	return
 }
@@ -300,7 +309,7 @@ func (s sAccount) getUserAccount(ctx context.Context, usr *do.User, account *do.
 	return
 }
 
-func (s sAccount) setAvatar(ctx context.Context, ua *model.UserAccount, token ...string) {
+func (s sAccount) setAvatar(ctx context.Context, acc *model.Account, token ...string) {
 	accessToken := ""
 	if len(token) > 0 && token[0] != "" {
 		accessToken = token[0]
@@ -308,14 +317,17 @@ func (s sAccount) setAvatar(ctx context.Context, ua *model.UserAccount, token ..
 		t := service.Token().GetTokenInfoFromCtx(ctx)
 		accessToken = t.AccessToken
 	}
-	if key := gconv.String(ua.Avatar); key != "" {
-		// using internal redirect instead of sign storage url directly
-		ua.Avatar = fmt.Sprintf("/v1/storage/account/avatar?key=%s&access_token=%s", key, accessToken)
+	acc.AvatarKey = acc.Avatar
+	key := gconv.String(acc.Avatar)
+	if key == "" {
+		return
 	}
-	if ua.SpaceInfo != nil && ua.SpaceInfo.LogoKey != "" {
-		// using internal redirect instead of sign storage url directly
-		ua.SpaceInfo.Logo = fmt.Sprintf("/v1/storage/space/logo?key=%s&access_token=%s", ua.SpaceInfo.LogoKey, accessToken)
-	}
+	values := url.Values{}
+	values.Set("access_token", accessToken)
+	values.Set("key", key)
+	values.Set("account_id", gconv.String(acc.Id))
+	// using internal redirect instead of sign storage url directly
+	acc.Avatar = fmt.Sprintf("/v1/storage/account/avatar?%s", values.Encode())
 }
 
 func (s sAccount) Exists(ctx context.Context, account string) (exists bool, err error) {
