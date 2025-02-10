@@ -13,7 +13,7 @@ func (c *ControllerRedirect) AccountAvatar(ctx context.Context, req *redirect.Ac
 	r := ghttp.RequestFromCtx(ctx)
 	token := service.Token().GetTokenInfoFromCtx(ctx)
 	account := req.AccountId
-	if req.AccountId != "" {
+	if account == "" {
 		account = token.AccountId
 	}
 	url, err := service.Storage().SignAvatarImageGetUrl(ctx, account, req.Key)

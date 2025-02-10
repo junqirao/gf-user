@@ -162,6 +162,9 @@ func (s sSpace) MyInvitations(ctx context.Context) (target, source []*model.Spac
 		if gconv.String(v.Target) == token.AccountId {
 			target = append(target, inv)
 		} else {
+			if token.SpaceId != gconv.Int64(inv.Space) {
+				continue
+			}
 			source = append(source, inv)
 		}
 	}
