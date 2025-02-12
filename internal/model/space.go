@@ -21,7 +21,6 @@ type SpaceInvitation struct {
 	Space     any           `json:"space"`
 	From      *AccountBrief `json:"from"`
 	To        *AccountBrief `json:"to"`
-	Status    any           `json:"status"`
 	Comment   any           `json:"comment"`
 	CreatedAt *gtime.Time   `json:"created_at"`
 }

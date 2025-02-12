@@ -15,7 +15,6 @@ type SpaceInvitation struct {
 	Id        interface{} //
 	Space     interface{} //
 	From      interface{} //
-	Status    interface{} // 0: create, 1: accept, 2: reject, 3: cancel
 	Target    interface{} //
 	Comment   interface{} //
 	CreatedAt *gtime.Time //

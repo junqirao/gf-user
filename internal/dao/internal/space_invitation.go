@@ -23,7 +23,6 @@ type SpaceInvitationColumns struct {
 	Id        string //
 	Space     string //
 	From      string //
-	Status    string // 0: create, 1: accept, 2: reject, 3: cancel
 	Target    string //
 	Comment   string //
 	CreatedAt string //
@@ -34,7 +33,6 @@ var spaceInvitationColumns = SpaceInvitationColumns{
 	Id:        "id",
 	Space:     "space",
 	From:      "from",
-	Status:    "status",
 	Target:    "target",
 	Comment:   "comment",
 	CreatedAt: "created_at",

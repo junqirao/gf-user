@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/junqirao/gocomponents/response"
@@ -13,7 +12,6 @@ import (
 	"gf-user/internal/consts"
 	"gf-user/internal/dao"
 	"gf-user/internal/model"
-	"gf-user/internal/model/code"
 	"gf-user/internal/model/do"
 	"gf-user/internal/model/entity"
 	"gf-user/internal/service"
@@ -21,6 +19,15 @@ import (
 
 func (s sSpace) CreateInvitation(ctx context.Context, in model.CreateSpaceInvitationInput) (err error) {
 	token := service.Token().GetTokenInfoFromCtx(ctx)
+	self, err := service.Account().IsValid(ctx, token.AccountId)
+	if err != nil {
+		return
+	}
+	target, err := service.Account().GetAccount(ctx, in.TargetAccount)
+	if err != nil {
+		return
+	}
+
 	sp, err := service.Space().GetSpaceInfo(ctx, token.SpaceId)
 	if err != nil {
 		return
@@ -33,20 +40,23 @@ func (s sSpace) CreateInvitation(ctx context.Context, in model.CreateSpaceInvita
 		err = response.CodePermissionDeny
 		return
 	}
-	account, err := service.Account().GetAccount(ctx, in.TargetAccount)
+	if in.TargetAccount == gconv.String(self.Account) {
+		err = response.CodeInvalidParameter.WithDetail("cannot invite self")
+		return
+	}
+	exist, err := service.User().Exist(ctx, gconv.String(target.Id), token.SpaceId)
 	if err != nil {
 		return
 	}
-	if gconv.Int(account.Status) != consts.AccountStatusNormal {
-		err = code.ErrAccountLocked.WithMessage("target account frozen")
+	if exist {
+		err = response.CodeConflict.WithDetail("user already in space")
 		return
 	}
 
 	_, err = dao.SpaceInvitation.Ctx(ctx).Insert(entity.SpaceInvitation{
 		Space:     int(token.SpaceId),
 		From:      token.AccountId,
-		Status:    consts.SpaceInvitationStatusCreate,
-		Target:    gconv.String(account.Id),
+		Target:    gconv.String(target.Id),
 		Comment:   in.Comment,
 		CreatedAt: gtime.Now(),
 	})
@@ -79,9 +89,7 @@ func (s sSpace) HandleInvitation(ctx context.Context, id, op int) (err error) {
 	}
 
 	if op == consts.SpaceInvitationStatusCancel || op == consts.SpaceInvitationStatusReject {
-		_, err = dao.SpaceInvitation.Ctx(ctx).Where(dao.SpaceInvitation.Columns().Id, id).Update(g.Map{
-			dao.SpaceInvitation.Columns().Status: op,
-		})
+		_, err = dao.SpaceInvitation.Ctx(ctx).Where(dao.SpaceInvitation.Columns().Id, id).Delete()
 		return
 	}
 
@@ -155,14 +163,13 @@ func (s sSpace) MyInvitations(ctx context.Context) (target, source []*model.Spac
 			Space:     spaceMap[gconv.Int64(v.Space)],
 			From:      accountMap[gconv.String(v.From)].AccountBrief,
 			To:        accountMap[gconv.String(v.Target)].AccountBrief,
-			Status:    v.Status,
 			Comment:   v.Comment,
 			CreatedAt: v.CreatedAt,
 		}
 		if gconv.String(v.Target) == token.AccountId {
 			target = append(target, inv)
 		} else {
-			if token.SpaceId != consts.DefaultSpaceId && token.SpaceId != gconv.Int64(v.Space) {
+			if token.SpaceId == consts.DefaultSpaceId || token.SpaceId != gconv.Int64(v.Space) {
 				continue
 			}
 			source = append(source, inv)
@@ -173,9 +180,7 @@ func (s sSpace) MyInvitations(ctx context.Context) (target, source []*model.Spac
 
 func (s sSpace) acceptInvitation(ctx context.Context, account *do.Account, invitation *do.SpaceInvitation) (err error) {
 	return dao.SpaceInvitation.Ctx(ctx).Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-		_, err = dao.SpaceInvitation.Ctx(ctx).Where(dao.SpaceInvitation.Columns().Id, invitation.Id).Update(g.Map{
-			dao.SpaceInvitation.Columns().Status: consts.SpaceInvitationStatusAccept,
-		})
+		_, err = dao.SpaceInvitation.Ctx(ctx).Where(dao.SpaceInvitation.Columns().Id, invitation.Id).Delete()
 		if err != nil {
 			return
 		}
