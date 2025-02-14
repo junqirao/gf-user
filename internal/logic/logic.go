@@ -6,6 +6,7 @@ package logic
 
 import (
 	_ "gf-user/internal/logic/account"
+	_ "gf-user/internal/logic/app"
 	_ "gf-user/internal/logic/config"
 	_ "gf-user/internal/logic/space"
 	_ "gf-user/internal/logic/storage"
