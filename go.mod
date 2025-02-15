@@ -12,6 +12,10 @@ require (
 	github.com/satori/go.uuid v1.2.0
 )
 
+replace (
+	sdk => ./sdk
+)
+
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/boombuler/barcode v1.0.2 // indirect

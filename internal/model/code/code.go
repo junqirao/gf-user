@@ -37,4 +37,5 @@ var (
 	ErrInvalidAppId     = response.NewCode(2000, "invalid app id", http.StatusBadRequest)
 	ErrInvalidAppSecret = response.NewCode(2001, "invalid app secret", http.StatusBadRequest)
 	ErrAppExpired       = response.NewCode(2002, "app expired", http.StatusBadRequest)
+	ErrInvalidAppToken  = response.NewCode(2003, "invalid app token", http.StatusBadRequest)
 )

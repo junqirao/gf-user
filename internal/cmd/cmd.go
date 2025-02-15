@@ -13,6 +13,7 @@ import (
 	"gf-user/internal/controller/app"
 	"gf-user/internal/controller/config"
 	"gf-user/internal/controller/middleware"
+	"gf-user/internal/controller/sdk"
 	"gf-user/internal/controller/space"
 	"gf-user/internal/controller/storage"
 )
@@ -45,6 +46,14 @@ var (
 					// app public
 					app.NewPublic(),
 				)
+				// sdk
+				group.Group("/sdk", func(group *ghttp.RouterGroup) {
+					group.Middleware(middleware.AuthSdk)
+					group.Bind(
+						// token
+						sdk.NewToken(),
+					)
+				})
 				// biz
 				group.Group("", func(group *ghttp.RouterGroup) {
 					group.Middleware(middleware.AuthToken)

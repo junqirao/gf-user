@@ -134,7 +134,7 @@ func (s sApp) Auth(ctx context.Context, in *model.ValidateAppInput) (err error) 
 	if err != nil {
 		return
 	}
-	if info.ExpiredAt.Before(gtime.Now()) {
+	if info.ExpiredAt != nil && info.ExpiredAt.Before(gtime.Now()) {
 		err = code.ErrAppExpired
 		_ = s.Remove(ctx, in.AppId)
 		return
