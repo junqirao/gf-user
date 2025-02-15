@@ -7,7 +7,7 @@ import (
 	"gf-user/internal/model"
 	"gf-user/internal/model/code"
 	"gf-user/internal/service"
-	"sdk"
+	"github.com/junqirao/gf-user/sdk"
 )
 
 func AuthSdk(r *ghttp.Request) {

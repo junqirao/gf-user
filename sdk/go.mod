@@ -1,4 +1,4 @@
-module sdk
+module github.com/junqirao/gf-user/sdk
 
 go 1.23.4
 
