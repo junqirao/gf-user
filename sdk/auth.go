@@ -17,18 +17,17 @@ func GenerateAuthenticationStr(appId, appSecret string) (code string) {
 	parts = append(parts, appId)
 	parts = append(parts, gmd5.MustEncrypt(gmd5.MustEncrypt(appSecret)+nonce))
 	parts = append(parts, nonce)
-	s := strings.Join(parts, ".")
-	code = gbase64.EncodeString(s + "." + gmd5.MustEncrypt(s))
+	code = gbase64.EncodeString(strings.Join(parts, "."))
 	return
 }
 
-func DecodeAuthenticationStr(code string) (appId, appSecret, nonce, signature string, err error) {
+func DecodeAuthenticationStr(code string) (appId, appSecret, nonce string, err error) {
 	decoded, err := gbase64.DecodeToString(code)
 	if err != nil {
 		return
 	}
 	parts := strings.Split(decoded, ".")
-	if len(parts) != 4 {
+	if len(parts) != 3 {
 		err = errors.New("invalid code")
 		return
 	}
@@ -36,6 +35,5 @@ func DecodeAuthenticationStr(code string) (appId, appSecret, nonce, signature st
 	appId = parts[0]
 	appSecret = parts[1]
 	nonce = parts[2]
-	signature = parts[3]
 	return
 }

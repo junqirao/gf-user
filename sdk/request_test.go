@@ -12,7 +12,7 @@ var (
 		AppId:         "7f1e5b4a-3696-442b-8f4d-d434ab941a59",
 		AppSecret:     "oh8fZ3XeXZs0DcgCCUsoT26O7vWAlxldXfZhF0M0qwiqZi71",
 		SkipTLSVerify: true,
-		Timeout:       5,
+		Timeout:       5000,
 	})
 )
 

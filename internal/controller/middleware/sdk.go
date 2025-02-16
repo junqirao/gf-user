@@ -11,7 +11,7 @@ import (
 )
 
 func AuthSdk(r *ghttp.Request) {
-	appId, appSecret, nonce, signature, err := sdk.DecodeAuthenticationStr(r.Header.Get("Authorization"))
+	appId, appSecret, nonce, err := sdk.DecodeAuthenticationStr(r.Header.Get("Authorization"))
 	if err != nil {
 		response.Error(r, code.ErrInvalidAppToken)
 		return
@@ -20,7 +20,6 @@ func AuthSdk(r *ghttp.Request) {
 		AppId:     appId,
 		AppSecret: appSecret,
 		Nonce:     nonce,
-		Signature: signature,
 	})
 	if err != nil {
 		response.Error(r, err)

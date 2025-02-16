@@ -50,7 +50,6 @@ type ValidateAppInput struct {
 	AppId     string `json:"app_id"`
 	AppSecret string `json:"app_secret"`
 	Nonce     string `json:"nonce"`
-	Signature string `json:"signature"`
 }
 
 type UpdateAppInput struct {
