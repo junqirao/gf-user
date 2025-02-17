@@ -24,7 +24,7 @@ func main() {
 		},
 		launcher.WithBeforeTasks(fn.BeforeTasks()...),
 		launcher.WithConcurrencyUpdater(
-			updater.NewKVDatabaseAdaptor(kvdb.Raw),
+			updater.NewKVDatabaseAdaptor(kvdb.MustGetDatabase(gctx.GetInitCtx())),
 			fn.UpdaterFuncInfos(gctx.GetInitCtx())...,
 		),
 	)

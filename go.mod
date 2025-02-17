@@ -8,7 +8,7 @@ require (
 	github.com/gogf/gf/v2 v2.8.3
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/junqirao/gf-user/sdk v0.0.0
-	github.com/junqirao/gocomponents v0.0.1-rc3.0.20250204100745-3bd7ed92cae9
+	github.com/junqirao/gocomponents v0.0.1-rc6
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/satori/go.uuid v1.2.0
 )

@@ -61,6 +61,10 @@ github.com/grokify/html-strip-tags-go v0.1.0 h1:03UrQLjAny8xci+R+qjCce/MYnpNXCtg
 github.com/grokify/html-strip-tags-go v0.1.0/go.mod h1:ZdzgfHEzAfz9X6Xe5eBLVblWIxXfYSQ40S/VKrAOGpc=
 github.com/junqirao/gocomponents v0.0.1-rc3.0.20250204100745-3bd7ed92cae9 h1:KqayxANpONBT8LCJD4RZLws4xFJ45/MP42iNTo4H4pM=
 github.com/junqirao/gocomponents v0.0.1-rc3.0.20250204100745-3bd7ed92cae9/go.mod h1:L2RzO9QmuJ0QtrdA/ZujY8SGvLxdWbFAIrAW3oet81I=
+github.com/junqirao/gocomponents v0.0.1-rc3.0.20250217153218-236f91c7767c h1:9xJ7Bc4A7v7LcywCbGDHKZt99jCToKaik0v2kJsOhu8=
+github.com/junqirao/gocomponents v0.0.1-rc3.0.20250217153218-236f91c7767c/go.mod h1:L2RzO9QmuJ0QtrdA/ZujY8SGvLxdWbFAIrAW3oet81I=
+github.com/junqirao/gocomponents v0.0.1-rc6 h1:OrBuc+Cs6zk7PE1mn9Owv+AkJeornOtJg2oWBrcynlg=
+github.com/junqirao/gocomponents v0.0.1-rc6/go.mod h1:L2RzO9QmuJ0QtrdA/ZujY8SGvLxdWbFAIrAW3oet81I=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/klauspost/compress v1.17.11 h1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IXrJmUc=
