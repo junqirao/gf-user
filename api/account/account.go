@@ -30,6 +30,7 @@ type IAccountLogin interface {
 	Register(ctx context.Context, req *login.RegisterReq) (res *login.RegisterRes, err error)
 	RegisterSuperAdministrator(ctx context.Context, req *login.RegisterSuperAdministratorReq) (res *login.RegisterSuperAdministratorRes, err error)
 	RefreshToken(ctx context.Context, req *login.RefreshTokenReq) (res *login.RefreshTokenRes, err error)
+	GenerateAppToken(ctx context.Context, req *login.GenerateAppTokenReq) (res *login.GenerateAppTokenRes, err error)
 }
 
 type IAccountUser interface {

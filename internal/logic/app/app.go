@@ -172,6 +172,11 @@ func (s sApp) getAppCache(ctx context.Context, id string) (cache *entity.App, er
 		return
 	}
 	cache = new(entity.App)
+	if cache.ExpiredAt != nil && cache.ExpiredAt.Before(gtime.Now()) {
+		err = code.ErrAppExpired
+		_ = s.Remove(ctx, cache.Id)
+		return
+	}
 	err = gconv.Struct(v[0].Value, &cache)
 	return
 }

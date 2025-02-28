@@ -60,6 +60,7 @@ func (s SDK) client(noAuth ...bool) *gclient.Client {
 	cli := s.cli.Clone()
 	if !(len(noAuth) > 0 && noAuth[0]) {
 		cli.SetHeader("Authorization", GenerateAuthenticationStr(s.cfg.AppId, s.cfg.AppSecret))
+		cli.SetHeader(HeaderKeyAppid, s.cfg.AppId)
 	}
 	return cli
 }

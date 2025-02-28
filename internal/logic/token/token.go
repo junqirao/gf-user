@@ -162,6 +162,33 @@ func (t sToken) RefreshToken(ctx context.Context, user *model.UserAccount, claim
 	return
 }
 
+func (t sToken) GenerateAppToken(ctx context.Context, appId string, user *model.UserAccount, claims *model.RefreshTokenClaims) (accessToken string, err error) {
+	mu, err := kvdb.NewMutex(ctx, fmt.Sprintf("user_token_handler_%v", user.Id))
+	if err != nil {
+		return
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	cfg := service.Config().GetTokenConfig(ctx)
+
+	key := t.getUserRefreshTokenKey(user.Id)
+	rts, err := t.getUserRefreshTokens(ctx, key)
+	if err != nil {
+		return
+	}
+	for _, rt := range rts {
+		if rt.Key == claims.Subject {
+			if accessToken, err = t.signAccessToken(cfg, user, rt.Key, appId); err != nil {
+				return
+			}
+			return
+		}
+	}
+
+	err = code.ErrRefreshTokenNotFound
+	return
+}
+
 func (t sToken) RemoveRefreshToken(ctx context.Context, accountId string, claims *model.RefreshTokenClaims) (err error) {
 	err = t.removeRefreshToken(ctx, accountId, claims.Subject)
 	return
@@ -235,8 +262,12 @@ func (t sToken) getUserRefreshTokens(ctx context.Context, key string) (rts []*re
 	return
 }
 
-func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string) (accessToken string, err error) {
+func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAccount, refreshTokenKey string, appId ...string) (accessToken string, err error) {
 	ts := time.Now()
+	var app string
+	if len(appId) > 0 {
+		app = appId[0]
+	}
 	return jwt.NewWithClaims(jwt.SigningMethodHS256,
 		&model.AccessTokenClaims{
 			RegisteredClaims: jwt.RegisteredClaims{
@@ -249,6 +280,7 @@ func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAcco
 			},
 			SpaceId: gconv.String(user.SpaceInfo.Id),
 			UserId:  gconv.String(user.UserInfo.Id),
+			APPId:   app,
 		},
 	).SignedString([]byte(cfg.TokenKey))
 }

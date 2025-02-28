@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+const (
+	HeaderKeyAppid = "X-App-Id"
+)
+
 type (
 	TokenInfo struct {
 		AccountId       string    `json:"account_id"`

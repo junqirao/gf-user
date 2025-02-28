@@ -233,6 +233,51 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 	return
 }
 
+func (s sAccount) GenerateAppToken(ctx context.Context, appId string, spaceId int64, refreshToken string) (res *model.UserAccountLoginInfo, err error) {
+	claims, err := service.Token().ParseRefreshToken(ctx, refreshToken)
+	if err != nil {
+		return
+	}
+
+	// check app
+	app, err := service.App().Info(ctx, appId)
+	if err != nil {
+		return
+	}
+
+	if spaceId <= 0 {
+		spaceId = consts.DefaultSpaceId
+	}
+
+	// check account
+	account, err := s.IsValid(ctx, claims.Audience[0])
+	if err != nil {
+		return
+	}
+	usr, err := service.User().GetUserByAccountId(ctx, gconv.String(account.Id), spaceId)
+	if err != nil {
+		return
+	}
+	ua, err := s.getUserAccount(ctx, usr, account)
+	if err != nil {
+		return
+	}
+
+	// sign app token
+	accessToken, err := service.Token().GenerateAppToken(ctx, app.Id, ua, claims)
+	if err != nil {
+		return
+	}
+
+	s.setAvatar(ctx, ua.Account, accessToken)
+
+	res = &model.UserAccountLoginInfo{
+		UserAccount: ua,
+		AccessToken: accessToken,
+	}
+	return
+}
+
 func (s sAccount) GetUserAccount(ctx context.Context, spaceId ...int64) (ua *model.UserAccount, err error) {
 	tokenInfo := service.Token().GetTokenInfoFromCtx(ctx)
 	account, err := s.IsValid(ctx, tokenInfo.AccountId)

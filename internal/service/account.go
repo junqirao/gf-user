@@ -18,6 +18,7 @@ type (
 		UserLogout(ctx context.Context, refreshToken string) (err error)
 		IsValid(ctx context.Context, accountId string) (acc *do.Account, err error)
 		RefreshToken(ctx context.Context, spaceId int64, refreshToken string) (res *model.UserAccountLoginInfo, err error)
+		GenerateAppToken(ctx context.Context, appId string, spaceId int64, refreshToken string) (res *model.UserAccountLoginInfo, err error)
 		GetUserAccount(ctx context.Context, spaceId ...int64) (ua *model.UserAccount, err error)
 		GetAccount(ctx context.Context, account string) (acc *do.Account, err error)
 		GetAccountById(ctx context.Context, id string) (acc *model.Account, err error)
