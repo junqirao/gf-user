@@ -134,11 +134,6 @@ func (s sApp) Auth(ctx context.Context, in *model.ValidateAppInput) (err error) 
 	if err != nil {
 		return
 	}
-	if info.ExpiredAt != nil && info.ExpiredAt.Before(gtime.Now()) {
-		err = code.ErrAppExpired
-		_ = s.Remove(ctx, in.AppId)
-		return
-	}
 	if in.AppSecret != gmd5.MustEncrypt(info.Secret+in.Nonce) {
 		err = code.ErrInvalidAppSecret
 		return

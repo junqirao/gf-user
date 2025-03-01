@@ -17,7 +17,7 @@ var (
 )
 
 func TestSDK_ValidateAccessToken(t *testing.T) {
-	resp, err := testSDK.ValidateAccessToken(context.Background(), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2VyLWNlbnRlciIsInN1YiI6IkVaRHZ3TjBRIiwiYXVkIjpbImNjM2E1MTY3LWJhMTMtNDhkMC1iY2EwLTRjZjU1NTg1MzdhYSJdLCJleHAiOjE3Mzk2MjMyODUsIm5iZiI6MTczOTYxNjA4NSwiaWF0IjoxNzM5NjE2MDg1LCJzaWQiOiIxIiwidWlkIjoiNDMifQ.jLK88tlUwOHTrpQN4a71Z9C3p6mat43LV07mBoIEgJw")
+	resp, err := testSDK.ValidateAccessToken(context.Background(), "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2VyLWNlbnRlciIsInN1YiI6Ilk0VXFrRk55IiwiYXVkIjpbImNjM2E1MTY3LWJhMTMtNDhkMC1iY2EwLTRjZjU1NTg1MzdhYSJdLCJleHAiOjE3NDA4NTI3MzUsIm5iZiI6MTc0MDg0NTUzNSwiaWF0IjoxNzQwODQ1NTM1LCJzaWQiOiIxIiwidWlkIjoiNDMiLCJhcHAiOiI3ZjFlNWI0YS0zNjk2LTQ0MmItOGY0ZC1kNDM0YWI5NDFhNTkifQ.cKmUBjKESQCQelo6UC8lgqsNh5DqWlvIUh_hCgBdpZY")
 	if err != nil {
 		t.Fatal(err)
 		return

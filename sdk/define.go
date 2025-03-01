@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	HeaderKeyAppid = "X-App-Id"
+	HeaderKeyAppid    = "X-App-Id"
+	HeaderKeyAppToken = "X-App-Token"
 )
 
 type (
@@ -16,5 +17,6 @@ type (
 		ExpireAt        time.Time `json:"expire_at"`
 		RefreshTokenKey string    `json:"refresh_token_key"`
 		AccessToken     string    `json:"access_token"`
+		AppId           string    `json:"app_id,omitempty"`
 	}
 )

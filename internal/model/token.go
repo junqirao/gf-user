@@ -14,7 +14,7 @@ type (
 		jwt.RegisteredClaims
 		SpaceId string `json:"sid,omitempty"`
 		UserId  string `json:"uid,omitempty"`
-		APPId   string `json:"app,omitempty"`
+		AppId   string `json:"app,omitempty"`
 	}
 	RefreshTokenClaims struct {
 		jwt.RegisteredClaims

@@ -100,6 +100,12 @@ func (t sToken) ValidAccessToken(ctx context.Context, accessToken string) (token
 		err = code.ErrInvalidToken
 		return
 	}
+	// validate appid if exists
+	if claims.AppId != "" {
+		if _, err = service.App().Info(ctx, claims.AppId); err != nil {
+			return
+		}
+	}
 	tokens, err := t.getUserRefreshTokens(ctx, t.getUserRefreshTokenKey(claims.Audience[0]))
 	if err != nil {
 		return
@@ -113,6 +119,7 @@ func (t sToken) ValidAccessToken(ctx context.Context, accessToken string) (token
 				ExpireAt:        claims.ExpiresAt.Time,
 				RefreshTokenKey: claims.Subject,
 				AccessToken:     accessToken,
+				AppId:           claims.AppId,
 			}
 			return
 		}
@@ -280,7 +287,7 @@ func (t sToken) signAccessToken(cfg *model.UserTokenConfig, user *model.UserAcco
 			},
 			SpaceId: gconv.String(user.SpaceInfo.Id),
 			UserId:  gconv.String(user.UserInfo.Id),
-			APPId:   app,
+			AppId:   app,
 		},
 	).SignedString([]byte(cfg.TokenKey))
 }
