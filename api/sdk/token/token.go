@@ -7,10 +7,10 @@ import (
 )
 
 type (
-	ValidateTokenReq struct {
+	ValidateAppTokenReq struct {
 		g.Meta `path:"/token/validate" tags:"SDK" method:"post" summary:"Validate Token"`
 		model.AppAuthorizationRequired
 	}
 
-	ValidateTokenRes model.TokenInfo
+	ValidateAppTokenRes model.TokenInfo
 )

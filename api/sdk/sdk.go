@@ -11,5 +11,5 @@ import (
 )
 
 type ISdkToken interface {
-	ValidateToken(ctx context.Context, req *token.ValidateTokenReq) (res *token.ValidateTokenRes, err error)
+	ValidateAppToken(ctx context.Context, req *token.ValidateAppTokenReq) (res *token.ValidateAppTokenRes, err error)
 }
