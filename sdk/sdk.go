@@ -12,9 +12,11 @@ import (
 )
 
 type Response[T any] struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Data    T      `json:"data"`
+	Code    int         `json:"code"`
+	Status  int         `json:"status"`
+	Header  http.Header `json:"header"`
+	Message string      `json:"message"`
+	Data    T           `json:"data"`
 }
 
 func (r *Response[T]) parse(resp *gclient.Response) (err error) {
@@ -28,6 +30,8 @@ func (r *Response[T]) parse(resp *gclient.Response) (err error) {
 			err = errors.New(r.Message)
 		}
 	}
+	r.Status = resp.StatusCode
+	r.Header = resp.Header.Clone()
 	return
 }
 
