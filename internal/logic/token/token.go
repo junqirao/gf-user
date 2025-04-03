@@ -102,7 +102,14 @@ func (t sToken) ValidAccessToken(ctx context.Context, accessToken string) (token
 	}
 	// validate appid if exists
 	if claims.AppId != "" {
-		if _, err = service.App().Info(ctx, claims.AppId); err != nil {
+		var app *model.AppInfo
+		app, err = service.App().Info(ctx, claims.AppId)
+		if err != nil {
+			return
+		}
+		// check space id
+		if app.Space != gconv.Int(claims.SpaceId) {
+			err = code.ErrAppSpaceNotAllowed
 			return
 		}
 	}
