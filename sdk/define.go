@@ -1,7 +1,7 @@
 package sdk
 
 import (
-	"gf-user/define"
+	"github.com/junqirao/gf-user/define"
 )
 
 const (

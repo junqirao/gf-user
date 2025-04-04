@@ -3,7 +3,7 @@ package model
 import (
 	"github.com/gogf/gf/v2/os/gtime"
 
-	"gf-user/define"
+	"github.com/junqirao/gf-user/define"
 )
 
 type Space = define.Space

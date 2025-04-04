@@ -5,15 +5,19 @@ go 1.23.4
 require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.8.3
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.3
-	github.com/gogf/gf/v2 v2.8.3
+	github.com/gogf/gf/v2 v2.9.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/junqirao/gf-user/define v0.0.0-00010101000000-000000000000
 	github.com/junqirao/gf-user/sdk v0.0.0
 	github.com/junqirao/gocomponents v0.0.4
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/satori/go.uuid v1.2.0
 )
 
-replace github.com/junqirao/gf-user/sdk => ./sdk
+replace (
+	github.com/junqirao/gf-user/define => ./define
+	github.com/junqirao/gf-user/sdk => ./sdk
+)
 
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
@@ -53,10 +57,10 @@ require (
 	go.etcd.io/etcd/api/v3 v3.5.20 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.20 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.18 // indirect
-	go.opentelemetry.io/otel v1.24.0 // indirect
-	go.opentelemetry.io/otel/metric v1.24.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.24.0 // indirect
-	go.opentelemetry.io/otel/trace v1.24.0 // indirect
+	go.opentelemetry.io/otel v1.32.0 // indirect
+	go.opentelemetry.io/otel/metric v1.32.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.32.0 // indirect
+	go.opentelemetry.io/otel/trace v1.32.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect

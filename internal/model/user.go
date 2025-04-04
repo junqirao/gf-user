@@ -1,7 +1,7 @@
 package model
 
 import (
-	"gf-user/define"
+	"github.com/junqirao/gf-user/define"
 )
 
 type (

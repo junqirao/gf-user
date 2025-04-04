@@ -3,9 +3,9 @@ package model
 import (
 	"github.com/gogf/gf/v2/util/gconv"
 
-	"gf-user/define"
 	"gf-user/internal/consts"
 	"gf-user/internal/model/do"
+	"github.com/junqirao/gf-user/define"
 )
 
 type (

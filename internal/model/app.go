@@ -5,8 +5,8 @@ import (
 
 	"github.com/gogf/gf/v2/os/gtime"
 
-	"gf-user/define"
 	"gf-user/internal/model/entity"
+	"github.com/junqirao/gf-user/define"
 )
 
 type AppInfo define.AppInfo

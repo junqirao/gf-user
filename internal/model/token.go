@@ -3,7 +3,7 @@ package model
 import (
 	"github.com/golang-jwt/jwt/v5"
 
-	"gf-user/define"
+	"github.com/junqirao/gf-user/define"
 )
 
 type (
