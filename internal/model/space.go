@@ -3,10 +3,10 @@ package model
 import (
 	"github.com/gogf/gf/v2/os/gtime"
 
-	"github.com/junqirao/gf-user/sdk"
+	"gf-user/define"
 )
 
-type Space = sdk.Space
+type Space = define.Space
 
 type SpaceInvitation struct {
 	Id        any           `json:"id"`

@@ -1,9 +1,9 @@
 package model
 
 import (
-	"github.com/junqirao/gf-user/sdk"
+	"gf-user/define"
 )
 
 type (
-	UserInfo = sdk.UserInfo
+	UserInfo = define.UserInfo
 )

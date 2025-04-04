@@ -3,7 +3,7 @@ package model
 import (
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/junqirao/gf-user/sdk"
+	"gf-user/define"
 )
 
 type (
@@ -25,7 +25,7 @@ type (
 		From     string `json:"frm,omitempty"`
 		UA       string `json:"uag,omitempty"`
 	}
-	TokenInfo          = sdk.TokenInfo
+	TokenInfo          = define.TokenInfo
 	RefreshTokenDetail struct {
 		Key        string `json:"key"`
 		City       string `json:"city"`
