@@ -4,10 +4,8 @@ go 1.23.4
 
 require (
 	github.com/gogf/gf/v2 v2.9.0
-	github.com/junqirao/gf-user/define v0.0.0-00010101000000-000000000000
+	github.com/junqirao/gf-user/define v0.0.1
 )
-
-replace github.com/junqirao/gf-user/define => ../define
 
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
