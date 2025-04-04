@@ -49,3 +49,14 @@ func TestSDK_GetAppInfo(t *testing.T) {
 	s, _ := json.MarshalIndent(resp, "", "  ")
 	t.Log(string(s))
 }
+
+func TestSDK_GetAppInfoPublic(t *testing.T) {
+	resp, err := testSDK.GetAppInfoPublic(context.Background())
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+
+	s, _ := json.MarshalIndent(resp, "", "  ")
+	t.Log(string(s))
+}
