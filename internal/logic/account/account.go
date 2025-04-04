@@ -245,8 +245,12 @@ func (s sAccount) GenerateAppToken(ctx context.Context, appId string, spaceId in
 		return
 	}
 
-	if spaceId <= 0 {
-		spaceId = consts.DefaultSpaceId
+	// if spaceId <= 0 {
+	// 	spaceId = consts.DefaultSpaceId
+	// }
+	if spaceId != gconv.Int64(app.Space) {
+		err = code.ErrAppSpaceNotAllowed.WithDetail(spaceId)
+		return
 	}
 
 	// check account

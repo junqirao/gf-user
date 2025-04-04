@@ -52,6 +52,8 @@ var (
 					group.Bind(
 						// token
 						sdk.NewToken(),
+						// app
+						sdk.NewApp(),
 					)
 				})
 				// biz

@@ -17,4 +17,5 @@ type (
 	UserAccount          = define.UserAccount
 	UserAccountLoginInfo = define.UserAccountLoginInfo
 	UserInfo             = define.UserInfo
+	AppInfo              = define.AppInfo
 )

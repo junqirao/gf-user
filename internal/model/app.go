@@ -5,18 +5,11 @@ import (
 
 	"github.com/gogf/gf/v2/os/gtime"
 
+	"gf-user/define"
 	"gf-user/internal/model/entity"
 )
 
-type AppInfo struct {
-	Id           string         `json:"id"` // app uuid (app_id)
-	Name         any            `json:"name"`
-	Space        int            `json:"space"`
-	Descriptions string         `json:"descriptions"`
-	Profile      map[string]any `json:"profile"`
-	ExpiredAt    *gtime.Time    `json:"expiredAt"`
-	CreatedAt    *gtime.Time    `json:"createdAt"`
-}
+type AppInfo define.AppInfo
 
 func NewAppInfo(a *entity.App) *AppInfo {
 	profile := make(map[string]any)

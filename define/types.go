@@ -68,4 +68,14 @@ type (
 		Name   interface{} `json:"name"`    //
 		JoinAt *gtime.Time `json:"join_at"` // join time
 	}
+
+	AppInfo struct {
+		Id           string         `json:"id"` // app uuid (app_id)
+		Name         any            `json:"name"`
+		Space        int            `json:"space"`
+		Descriptions string         `json:"descriptions"`
+		Profile      map[string]any `json:"profile"`
+		ExpiredAt    *gtime.Time    `json:"expiredAt"`
+		CreatedAt    *gtime.Time    `json:"createdAt"`
+	}
 )

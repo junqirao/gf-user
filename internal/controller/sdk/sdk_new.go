@@ -13,3 +13,9 @@ type ControllerToken struct{}
 func NewToken() sdk.ISdkToken {
 	return &ControllerToken{}
 }
+
+type ControllerApp struct{}
+
+func NewApp() sdk.ISdkApp {
+	return &ControllerApp{}
+}
