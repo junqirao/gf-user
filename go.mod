@@ -7,9 +7,9 @@ require (
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.8.3
 	github.com/gogf/gf/v2 v2.9.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/junqirao/gf-user/define v0.0.0-00010101000000-000000000000
+	github.com/junqirao/gf-user/define v0.0.1
 	github.com/junqirao/gf-user/sdk v0.0.0
-	github.com/junqirao/gocomponents v0.0.4
+	github.com/junqirao/gocomponents v0.1.2-0.20250405153456-f7b7b19d9040
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/satori/go.uuid v1.2.0
 )
@@ -51,6 +51,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.83 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/oschwald/maxminddb-golang v1.13.0 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/redis/go-redis/v9 v9.7.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rs/xid v1.6.0 // indirect
