@@ -205,6 +205,11 @@ func (s sAccount) RefreshToken(ctx context.Context, spaceId int64, refreshToken 
 		spaceId = consts.DefaultSpaceId
 	}
 
+	// for compatibility
+	ctx = context.WithValue(ctx, consts.CtxKeyTokenInfo, &model.TokenInfo{
+		AccountId: claims.Audience[0],
+	})
+
 	account, err := s.IsValid(ctx, claims.Audience[0])
 	if err != nil {
 		return
@@ -238,6 +243,11 @@ func (s sAccount) GenerateAppToken(ctx context.Context, appId string, spaceId in
 	if err != nil {
 		return
 	}
+
+	// for compatibility
+	ctx = context.WithValue(ctx, consts.CtxKeyTokenInfo, &model.TokenInfo{
+		AccountId: claims.Audience[0],
+	})
 
 	// check app
 	app, err := service.App().Info(ctx, appId)
