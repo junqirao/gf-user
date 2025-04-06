@@ -9,7 +9,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/junqirao/gf-user/define v0.0.1
 	github.com/junqirao/gf-user/sdk v0.0.0
-	github.com/junqirao/gocomponents v0.1.2-0.20250405153456-f7b7b19d9040
+	github.com/junqirao/gocomponents v0.2.0
 	github.com/oschwald/geoip2-golang v1.11.0
 	github.com/satori/go.uuid v1.2.0
 )
