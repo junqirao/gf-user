@@ -121,6 +121,10 @@ func (s sConfig) SystemInitialized(ctx context.Context) (ok bool, err error) {
 	return
 }
 
+func (s sConfig) UpdateSystemInitialized(ctx context.Context) (err error) {
+	return s.updateSystemInitialized(ctx)
+}
+
 func (s sConfig) updateSystemInitialized(ctx context.Context) (err error) {
 	mutex, err := kvdb.NewMutex(ctx, "get_system_status")
 	if err != nil {

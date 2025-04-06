@@ -19,6 +19,7 @@ type (
 		Set(ctx context.Context, key string, val any) (err error)
 		Exist(ctx context.Context, key string) (exist bool, err error)
 		SystemInitialized(ctx context.Context) (ok bool, err error)
+		UpdateSystemInitialized(ctx context.Context) (err error)
 	}
 )
 
